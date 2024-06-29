@@ -1,1 +1,14 @@
-spring.application.name=contractor
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/contractor?currentSchema=contractor
+    username: contractor
+    password: contractor
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+      continue-on-error: false
+  liquibase:
+    change-log: classpath:liquibase/db.changelog.yaml
+    enabled: true
+    default-schema: contractor
