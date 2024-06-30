@@ -228,37 +228,34 @@ class ContractorControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         content().json("""
-                        {"totalPages":1,
-                        "totalElements":1,
-                        "pageable":
-                            {"pageNumber":0,
-                            "pageSize":20,
-                            "sort":{"sorted":false,"empty":true,"unsorted":true},
-                            "offset":0,"paged":true,"unpaged":false
-                            },
-                        "first":true,
-                        "last":true,
-                        "size":20,
-                        "content":[
-                            {"id":"1",
-                            "parentId":null,
-                            "name":"Contractor 1",
-                            "nameFull":"Full Name 1",
-                            "inn":"111111111",
-                            "ogrn":"111111111",
-                            "country":{"id":"ABH","name":"Абхазия","active":true},
-                            "industry":{"id":1,"name":"Авиастроение","active":true},
-                            "orgForm":{"id":1,"name":"-","active":true},
-                            "createDate":"2021-12-31T22:00:00.000+00:00",
-                            "modifyDate":null,
-                            "createUserId":"user1",
-                            "modifyUserId":null,
-                            "active":true}
-                            ],
-                        "number":0,
-                        "sort":{"sorted":false,"empty":true,"unsorted":true},
-                        "numberOfElements":1,"empty":false
-                        }
+                             {
+                             "id": "1",
+                             "parentId": null,
+                             "name": "Contractor 1",
+                             "nameFull": "Full Name 1",
+                             "inn": "111111111",
+                             "ogrn": "111111111",
+                             "country": {
+                                 "id": "ABH",
+                                 "name": "Абхазия",
+                                 "active": true
+                             },
+                             "industry": {
+                                 "id": 1,
+                                 "name": "Авиастроение",
+                                 "active": true
+                             },
+                             "orgForm": {
+                                 "id": 1,
+                                 "name": "-",
+                                 "active": true
+                             },
+                             "createDate": "2022-01-01",
+                             "modifyDate": null,
+                             "createUserId": "user1",
+                             "modifyUserId": null,
+                             "active": true
+                         }
                         """)
                 );
     }

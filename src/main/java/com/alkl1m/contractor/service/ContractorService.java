@@ -14,7 +14,7 @@ public interface ContractorService {
 
     Page<Contractor> getContractorPageableById(String id, Pageable pageable);
 
-    Page<Contractor> findContractorWithDetailsById(String id, Pageable pageable);
+    Contractor findContractorWithDetailsById(String id);
 
     void deleteContractorById(String id);
 

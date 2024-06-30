@@ -4,11 +4,11 @@ import com.alkl1m.contractor.domain.entitiy.Contractor;
 import com.alkl1m.contractor.domain.entitiy.Country;
 import com.alkl1m.contractor.domain.entitiy.Industry;
 import com.alkl1m.contractor.domain.entitiy.OrgForm;
-import com.alkl1m.contractor.domain.entitiy.exception.ContractorNotFoundException;
-import com.alkl1m.contractor.domain.entitiy.exception.CountryNotFoundException;
-import com.alkl1m.contractor.domain.entitiy.exception.IndustryNotFoundException;
-import com.alkl1m.contractor.domain.entitiy.exception.OrgFormNotFoundException;
-import com.alkl1m.contractor.repository.ContractorCrudRepository;
+import com.alkl1m.contractor.domain.exception.ContractorNotFoundException;
+import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
+import com.alkl1m.contractor.domain.exception.IndustryNotFoundException;
+import com.alkl1m.contractor.domain.exception.OrgFormNotFoundException;
+import com.alkl1m.contractor.repository.jdbc.ContractorJdbcRepository;
 import com.alkl1m.contractor.repository.ContractorRepository;
 import com.alkl1m.contractor.repository.CountryRepository;
 import com.alkl1m.contractor.repository.IndustryRepository;
@@ -34,7 +34,7 @@ import java.util.Optional;
 public class ContractorServiceImpl implements ContractorService {
 
     private final ContractorRepository contractorRepository;
-    private final ContractorCrudRepository contractorCrudRepository;
+    private final ContractorJdbcRepository contractorJdbcRepository;
     private final CountryRepository countryRepository;
     private final IndustryRepository industryRepository;
     private final OrgFormRepository orgFormRepository;
@@ -65,8 +65,9 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public Page<Contractor> findContractorWithDetailsById(String id, Pageable pageable) {
-        return contractorCrudRepository.findContractorWithDetailsById(id, pageable);
+    public Contractor findContractorWithDetailsById(String id) {
+        Optional<Contractor> optionalContractor = contractorJdbcRepository.findById(id);
+        return optionalContractor.orElseThrow(() -> new RuntimeException("Contractor not found for id: " + id));
     }
 
     @Override

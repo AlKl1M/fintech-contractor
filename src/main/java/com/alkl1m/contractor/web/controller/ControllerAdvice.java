@@ -1,10 +1,10 @@
 package com.alkl1m.contractor.web.controller;
 
-import com.alkl1m.contractor.domain.entitiy.exception.ContractorNotFoundException;
-import com.alkl1m.contractor.domain.entitiy.exception.CountryNotFoundException;
-import com.alkl1m.contractor.domain.entitiy.exception.ExceptionBody;
-import com.alkl1m.contractor.domain.entitiy.exception.IndustryNotFoundException;
-import com.alkl1m.contractor.domain.entitiy.exception.OrgFormNotFoundException;
+import com.alkl1m.contractor.domain.exception.ContractorNotFoundException;
+import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
+import com.alkl1m.contractor.domain.exception.ExceptionBody;
+import com.alkl1m.contractor.domain.exception.IndustryNotFoundException;
+import com.alkl1m.contractor.domain.exception.OrgFormNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

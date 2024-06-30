@@ -1,7 +1,7 @@
 package com.alkl1m.contractor.service.impl;
 
 import com.alkl1m.contractor.domain.entitiy.Industry;
-import com.alkl1m.contractor.domain.entitiy.exception.IndustryNotFoundException;
+import com.alkl1m.contractor.domain.exception.IndustryNotFoundException;
 import com.alkl1m.contractor.repository.IndustryRepository;
 import com.alkl1m.contractor.service.IndustryService;
 import com.alkl1m.contractor.web.payload.NewIndustryPayload;

@@ -1,7 +1,7 @@
 package com.alkl1m.contractor.service.impl;
 
 import com.alkl1m.contractor.domain.entitiy.OrgForm;
-import com.alkl1m.contractor.domain.entitiy.exception.OrgFormNotFoundException;
+import com.alkl1m.contractor.domain.exception.OrgFormNotFoundException;
 import com.alkl1m.contractor.repository.OrgFormRepository;
 import com.alkl1m.contractor.service.OrgFormService;
 import com.alkl1m.contractor.web.payload.NewOrgFormPayload;

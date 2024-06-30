@@ -50,8 +50,8 @@ public class ContractorController {
 
     @AuditLog
     @GetMapping("/crud/{id}")
-    public Page<Contractor> findContractorWithDetailsById(@PathVariable String id, Pageable pageable) {
-        return contractorService.findContractorWithDetailsById(id, pageable);
+    public Contractor findContractorWithDetailsById(@PathVariable String id) {
+        return contractorService.findContractorWithDetailsById(id);
     }
 
     @AuditLog

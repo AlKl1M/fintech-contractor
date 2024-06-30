@@ -1,7 +1,7 @@
 package com.alkl1m.contractor.service.impl;
 
 import com.alkl1m.contractor.domain.entitiy.Country;
-import com.alkl1m.contractor.domain.entitiy.exception.CountryNotFoundException;
+import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
 import com.alkl1m.contractor.repository.CountryRepository;
 import com.alkl1m.contractor.service.CountryService;
 import com.alkl1m.contractor.web.payload.NewCountryPayload;
