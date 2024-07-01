@@ -1,22 +1,22 @@
 create table if not exists country
 (
-    id        text primary key,
-    name      text    not null,
-    is_active boolean not null default true
+    id        text primary key not null,
+    name      text             not null,
+    is_active boolean          not null default true
 );
 
 create table if not exists industry
 (
-    id        serial primary key,
-    name      text    not null,
-    is_active boolean not null default true
+    id        serial primary key not null,
+    name      text               not null,
+    is_active boolean            not null default true
 );
 
 create table if not exists org_form
 (
-    id        serial primary key,
-    name      text    not null,
-    is_active boolean not null default true
+    id        serial primary key not null,
+    name      text               not null,
+    is_active boolean            not null default true
 );
 
 create table if not exists contractor

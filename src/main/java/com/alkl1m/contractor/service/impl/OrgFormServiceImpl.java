@@ -26,13 +26,26 @@ public class OrgFormServiceImpl implements OrgFormService {
 
     @Override
     public OrgForm getOrgFormById(Long id) {
-        return orgFormRepository.findById(id).orElse(null);
+        return orgFormRepository.findById(id).orElseThrow(
+                () -> new OrgFormNotFoundException("OrgForm with id " + id + " not found")
+        );
     }
 
     @Override
     @Transactional
     public OrgForm saveOrgForm(NewOrgFormPayload payload) {
-        return orgFormRepository.save(NewOrgFormPayload.toOrgForm(payload));
+        if (payload.id() == null) {
+            return orgFormRepository.save(NewOrgFormPayload.toOrgForm(payload));
+        } else {
+            Optional<OrgForm> existingOrgForm = orgFormRepository.findById(payload.id());
+            if (existingOrgForm.isPresent()) {
+                OrgForm orgForm = existingOrgForm.get();
+                orgForm.setName(payload.name());
+                return orgFormRepository.save(orgForm);
+            } else {
+                throw new OrgFormNotFoundException("OrgForm with id " + payload.id() + " not found");
+            }
+        }
     }
 
     @Override

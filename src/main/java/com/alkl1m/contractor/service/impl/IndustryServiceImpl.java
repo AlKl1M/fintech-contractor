@@ -26,13 +26,26 @@ public class IndustryServiceImpl implements IndustryService {
 
     @Override
     public Industry getIndustryById(Long id) {
-        return industryRepository.findById(id).orElse(null);
+        return industryRepository.findById(id).orElseThrow(
+                () -> new IndustryNotFoundException("Industry with id " + id + " not found")
+        );
     }
 
     @Override
     @Transactional
     public Industry saveIndustry(NewIndustryPayload payload) {
-        return industryRepository.save(NewIndustryPayload.toIndustry(payload));
+        if (payload.id() == null) {
+            return industryRepository.save(NewIndustryPayload.toIndustry(payload));
+        } else {
+            Optional<Industry> existingIndustry = industryRepository.findById(payload.id());
+            if (existingIndustry.isPresent()) {
+                Industry industry = existingIndustry.get();
+                industry.setName(payload.name());
+                return industryRepository.save(industry);
+            } else {
+                throw new IndustryNotFoundException("Industry with id " + payload.id() + " not found");
+            }
+        }
     }
 
     @Override
