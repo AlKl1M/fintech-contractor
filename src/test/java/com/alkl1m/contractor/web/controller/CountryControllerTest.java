@@ -22,7 +22,7 @@ class CountryControllerTest {
     MockMvc mockMvc;
 
     @Test
-    void testGetAllCountries() throws Exception {
+    void testGetAllCountries_withValidPayload_returnsValidData() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/country/all"))
                 .andExpectAll(
                         status().isOk(),
@@ -34,50 +34,50 @@ class CountryControllerTest {
     }
 
     @Test
-    void testGetCountryById() throws Exception {
+    void testGetCountryById_withValidPayload_returnsValidData() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/country/{id}", "ABH"))
                 .andExpectAll(
                         status().isOk(),
                         content().json(
                                 """
-                                {"id":"ABH","name":"Абхазия","active":true}
-                                """
+                                        {"id":"ABH","name":"Абхазия","active":true}
+                                        """
                         )
                 );
     }
 
     @Test
-    void testSaveCountry() throws Exception {
+    void testSaveCountry_withValidPayload_returnsValidData() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                {"id": "ABH", "name": "testCountry"}
-                """))
+                                {"id": "ABH", "name": "testCountry"}
+                                """))
                 .andExpectAll(
                         status().isOk(),
                         content().json("""
-                        {"id":"ABH","name":"testCountry"}
-                        """)
+                                {"id":"ABH","name":"testCountry"}
+                                """)
                 );
     }
 
     @Test
-    void testSaveCountry_exception() throws Exception {
+    void testSaveCountry_withInvalidPayload_returnsErrorMessage() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                {"id": null, "name": null}
-                """))
+                                {"id": null, "name": null}
+                                """))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                        {"message":"Validation failed.","errors":{"name":"Name cannot be null","id":"Id cannot be null"}}
-                        """)
+                                {"message":"Validation failed.","errors":{"name":"Name cannot be null","id":"ID cannot be null"}}
+                                """)
                 );
     }
 
     @Test
-    void testDeleteCountry() throws Exception {
+    void testDeleteCountry_withValidPayload_returnsValidStatus() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/country/delete/{id}", "ABH"))
                 .andExpectAll(
                         status().isOk()
