@@ -1,4 +1,4 @@
-package com.alkl1m.contractor.domain.entitiy.exception;
+package com.alkl1m.contractor.domain.exception;
 
 public class IndustryNotFoundException extends RuntimeException {
 
