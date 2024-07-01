@@ -9,19 +9,19 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 
 public record NewContractorPayload(
-        @NotNull(message = "Id cannot be null")
+        @NotNull(message = "{contractor.contractor.errors.id_is_null}")
         String id,
         String parentId,
-        @NotNull(message = "Name cannot be null")
+        @NotNull(message = "{contractor.contractor.errors.name_is_null}")
         String name,
         String nameFull,
         String inn,
         String ogrn,
-        @NotNull(message = "Country ID cannot be null")
+        @NotNull(message = "{contractor.contractor.errors.country_id_is_null}")
         String country_id,
-        @NotNull(message = "Industry ID cannot be null")
+        @NotNull(message = "{contractor.contractor.errors.industry_id_is_null}")
         Long industry_id,
-        @NotNull(message = "Organization Form ID cannot be null")
+        @NotNull(message = "{contractor.contractor.errors.org_form_id_is_null}")
         Long orgForm_id) {
 
         public static Contractor toContractor(NewContractorPayload payload,

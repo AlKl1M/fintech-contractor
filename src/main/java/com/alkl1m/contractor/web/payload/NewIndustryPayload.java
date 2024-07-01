@@ -4,9 +4,8 @@ import com.alkl1m.contractor.domain.entitiy.Industry;
 import jakarta.validation.constraints.NotNull;
 
 public record NewIndustryPayload(
-        @NotNull(message = "Id cannot be null")
         Long id,
-        @NotNull(message = "Name cannot be null")
+        @NotNull(message = "{contractor.industry.errors.name_is_null}")
         String name
 ) {
 

@@ -4,9 +4,8 @@ import com.alkl1m.contractor.domain.entitiy.OrgForm;
 import jakarta.validation.constraints.NotNull;
 
 public record NewOrgFormPayload(
-        @NotNull(message = "Id cannot be null")
         Long id,
-        @NotNull(message = "Name cannot be null")
+        @NotNull(message = "{contractor.org_form.errors.name_is_null}")
         String name
 ) {
 
