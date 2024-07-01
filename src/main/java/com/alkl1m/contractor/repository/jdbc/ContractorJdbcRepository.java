@@ -11,6 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
+/**
+ * Репозиторий для работы с контрагентом.
+ * Содержит реализацию запросов без использования ORM.
+ *
+ * @author alkl1m
+ */
 @Repository
 @RequiredArgsConstructor
 public class ContractorJdbcRepository {
@@ -30,6 +36,10 @@ public class ContractorJdbcRepository {
             WHERE c.id = ?
             """;
 
+    /**
+     * @param id контрагента.
+     * @return контрагент, обернутый в Optional. Может быть пустым.
+     */
     public Optional<Contractor> findById(String id) {
         try {
             Connection connection = dataSourceConfig.getConnection();

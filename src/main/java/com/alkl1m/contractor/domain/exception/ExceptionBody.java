@@ -6,6 +6,11 @@ import lombok.Setter;
 
 import java.util.Map;
 
+/**
+ * Класс, который содержит информацию об исключении или ошибке.
+ *
+ * @author alkl1m
+ */
 @Getter
 @Setter
 @AllArgsConstructor

@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * RestController для работы с контрагентами.
+ *
+ * @author alkl1m
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/contractor")
@@ -26,6 +31,14 @@ public class ContractorController {
 
     private final ContractorService contractorService;
 
+    /**
+     * Метод для поиска исполнителей контрагентов по заданным параметрам.
+     *
+     * @param payload объект, содержащий фильтры для поиска контрагентов.
+     * @param page    номер страницы результатов (по умолчанию 0).
+     * @param size    количество элементов на странице (по умолчанию 10).
+     * @return страница с найденными контрагентами.
+     */
     @AuditLog
     @PostMapping("/search")
     public Page<Contractor> getContractorsByParameters(
@@ -36,24 +49,48 @@ public class ContractorController {
         return contractorService.getContractorsByParameters(payload, page, size);
     }
 
+    /**
+     * Метод для сохранения или обновления контрагента с использованием аннотации @AuditLog.
+     *
+     * @param payload объект с данными нового контрагента.
+     * @return сохраненный или обновленный контрагент.
+     */
     @AuditLog
     @PutMapping("/save")
     public Contractor saveOrUpdateContractor(@Validated @RequestBody NewContractorPayload payload) {
         return contractorService.saveOrUpdate(payload);
     }
 
+    /**
+     * Метод для получения страницы с контрагентами по их идентификатору с использованием аннотации @AuditLog.
+     *
+     * @param id       идентификатор контрагента.
+     * @param pageable параметры страницы.
+     * @return страница с найденными контрагентами.
+     */
     @AuditLog
     @GetMapping("/{id}")
     public Page<Contractor> getContractorPageableById(@PathVariable String id, Pageable pageable) {
         return contractorService.getContractorPageableById(id, pageable);
     }
 
+    /**
+     * Метод для поиска контрагента с деталями по идентификатору с использованием аннотации @AuditLog.
+     *
+     * @param id идентификатор контрагента.
+     * @return найденный контрагент с деталями.
+     */
     @AuditLog
     @GetMapping("/crud/{id}")
     public Contractor findContractorWithDetailsById(@PathVariable String id) {
         return contractorService.findContractorWithDetailsById(id);
     }
 
+    /**
+     * Метод для удаления контрагента по идентификатору с использованием аннотации @AuditLog.
+     *
+     * @param id идентификатор контрагента.
+     */
     @AuditLog
     @DeleteMapping("/delete/{id}")
     public void deleteContractorById(@PathVariable String id) {

@@ -15,8 +15,18 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Спецификация для фильтрации данных посредством получения
+ * нужных параметров из тела запроса.
+ *
+ * @author alkl1m
+ */
 public class ContractorSpecifications {
 
+    /**
+     * @param payload список фильтров.
+     * @return контрагенты, подходящие под критерии фильтрации.
+     */
     public static Specification<Contractor> getContractorByParameters(ContractorFiltersPayload payload) {
         return new Specification<Contractor>() {
 

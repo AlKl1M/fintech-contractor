@@ -5,6 +5,10 @@ import com.alkl1m.contractor.web.payload.NewCountryPayload;
 
 import java.util.List;
 
+/**
+ *
+ * @author alkl1m
+ */
 public interface CountryService {
 
     List<Country> getAllCountries();

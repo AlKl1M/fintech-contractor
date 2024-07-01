@@ -5,6 +5,10 @@ import com.alkl1m.contractor.web.payload.NewOrgFormPayload;
 
 import java.util.List;
 
+/**
+ *
+ * @author alkl1m
+ */
 public interface OrgFormService {
 
     List<OrgForm> getAllOrgForms();

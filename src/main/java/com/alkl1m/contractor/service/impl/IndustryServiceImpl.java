@@ -12,6 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реализация сервиса для работы с индустриальными кодами.
+ *
+ * @author alkl1m
+ */
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -19,11 +24,22 @@ public class IndustryServiceImpl implements IndustryService {
 
     private final IndustryRepository industryRepository;
 
+    /**
+     * Метод для получения всех индустриальных кодов.
+     *
+     * @return список индустриальных кодов.
+     */
     @Override
     public List<Industry> getAllIndustries() {
         return industryRepository.findAll();
     }
 
+    /**
+     * Метод для получения индустриального кода по id.
+     *
+     * @param id индустриального кода.
+     * @return объект индустриального кода.
+     */
     @Override
     public Industry getIndustryById(Long id) {
         return industryRepository.findById(id).orElseThrow(
@@ -31,6 +47,13 @@ public class IndustryServiceImpl implements IndustryService {
         );
     }
 
+    /**
+     * Метод для создания нового индустриального кода и обновления существующего,
+     * если в dto передан id.
+     *
+     * @param payload dto нового индустриального кода.
+     * @return созданный или обновленный индустриальный код.
+     */
     @Override
     @Transactional
     public Industry saveIndustry(NewIndustryPayload payload) {
@@ -48,6 +71,11 @@ public class IndustryServiceImpl implements IndustryService {
         }
     }
 
+    /**
+     * Метод для удаления индустриального кода по id.
+     *
+     * @param id индустриального кода.
+     */
     @Override
     @Transactional
     public void deleteIndustry(Long id) {

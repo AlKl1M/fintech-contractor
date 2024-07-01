@@ -15,9 +15,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * ControllerAdvice для обработки исключений.
+ *
+ * @author alkl1m
+ */
 @RestControllerAdvice
 public class ControllerAdvice {
 
+    /**
+     * Метод для обработки IllegalStateException.
+     *
+     * @param e исключение IllegalStateException.
+     * @return объект ExceptionBody с сообщением об ошибке.
+     */
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleIllegalState(
@@ -26,6 +37,12 @@ public class ControllerAdvice {
         return new ExceptionBody(e.getMessage());
     }
 
+    /**
+     * Метод для обработки MethodArgumentNotValidException.
+     *
+     * @param e исключение MethodArgumentNotValidException.
+     * @return объект ExceptionBody с сообщением об ошибке и деталями валидации.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleMethodArgumentNotValid(
@@ -43,6 +60,12 @@ public class ControllerAdvice {
         return exceptionBody;
     }
 
+    /**
+     * Метод для обработки ContractorNotFoundException.
+     *
+     * @param e исключение ContractorNotFoundException.
+     * @return объект ExceptionBody с сообщением об ошибке.
+     */
     @ExceptionHandler(ContractorNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleContractorNotFound(
@@ -51,6 +74,12 @@ public class ControllerAdvice {
         return new ExceptionBody(e.getMessage());
     }
 
+    /**
+     * Метод для обработки CountryNotFoundException.
+     *
+     * @param e исключение CountryNotFoundException.
+     * @return объект ExceptionBody с сообщением об ошибке.
+     */
     @ExceptionHandler(CountryNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleCountryNotFound(
@@ -59,6 +88,12 @@ public class ControllerAdvice {
         return new ExceptionBody(e.getMessage());
     }
 
+    /**
+     * Метод для обработки IndustryNotFoundException.
+     *
+     * @param e исключение IndustryNotFoundException.
+     * @return объект ExceptionBody с сообщением об ошибке.
+     */
     @ExceptionHandler(IndustryNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleIndustryNotFound(
@@ -67,6 +102,12 @@ public class ControllerAdvice {
         return new ExceptionBody(e.getMessage());
     }
 
+    /**
+     * Метод для обработки OrgFormNotFoundException.
+     *
+     * @param e исключение OrgFormNotFoundException.
+     * @return объект ExceptionBody с сообщением об ошибке.
+     */
     @ExceptionHandler(OrgFormNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleOrgFormNotFound(

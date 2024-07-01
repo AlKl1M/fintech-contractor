@@ -12,6 +12,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ *
+ * @author alkl1m
+ */
 @Data
 @Entity
 @Builder

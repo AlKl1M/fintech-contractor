@@ -6,6 +6,10 @@ import com.alkl1m.contractor.web.payload.NewContractorPayload;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+/**
+ *
+ * @author alkl1m
+ */
 public interface ContractorService {
 
     Page<Contractor> getContractorsByParameters(ContractorFiltersPayload payload, int page, int size);

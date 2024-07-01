@@ -5,6 +5,10 @@ import com.alkl1m.contractor.web.payload.NewIndustryPayload;
 
 import java.util.List;
 
+/**
+ *
+ * @author alkl1m
+ */
 public interface IndustryService {
 
     List<Industry> getAllIndustries();

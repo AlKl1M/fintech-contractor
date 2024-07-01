@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+/**
+ *
+ * @author alkl1m
+ */
 @Data
 @Entity
 @Builder

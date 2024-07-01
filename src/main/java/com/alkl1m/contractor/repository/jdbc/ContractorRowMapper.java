@@ -8,8 +8,19 @@ import lombok.SneakyThrows;
 
 import java.sql.ResultSet;
 
+/**
+ * Класс, который делает маппинг из результата запроса в бд в контрагент.
+ *
+ * @author alkl1m
+ */
 public class ContractorRowMapper {
 
+    /**
+     * @param resultSet результат запроса в бд.
+     * @return контрагент, полученный из данных из запроса.
+     *
+     * @author alkl1m
+     */
     @SneakyThrows
     public static Contractor mapRow(ResultSet resultSet) {
         if (resultSet.next()) {

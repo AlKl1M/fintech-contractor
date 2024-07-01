@@ -7,6 +7,11 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import javax.sql.DataSource;
 import java.sql.Connection;
 
+/**
+ * Класс для получения и настройки подключения к бд.
+ *
+ * @author alkl1m
+ */
 @Configuration
 @RequiredArgsConstructor
 public class DataSourceConfig {
