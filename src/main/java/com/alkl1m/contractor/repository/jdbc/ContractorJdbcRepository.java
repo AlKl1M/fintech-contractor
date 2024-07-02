@@ -1,14 +1,10 @@
 package com.alkl1m.contractor.repository.jdbc;
 
 import com.alkl1m.contractor.domain.entitiy.Contractor;
-import com.alkl1m.contractor.domain.exception.ContractorNotFoundException;
-import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Optional;
 
 /**
@@ -18,10 +14,9 @@ import java.util.Optional;
  * @author alkl1m
  */
 @Repository
-@RequiredArgsConstructor
 public class ContractorJdbcRepository {
 
-    private final DataSourceConfig dataSourceConfig;
+    private final JdbcTemplate jdbcTemplate;
 
     private final String FIND_BY_ID = """
             SELECT c.id AS contractor_id, c.name AS contractor_name, c.name_full AS contractor_full_name, c.inn, c.ogrn,
@@ -36,23 +31,12 @@ public class ContractorJdbcRepository {
             WHERE c.id = ?
             """;
 
-    /**
-     * @param id контрагента.
-     * @return контрагент, обернутый в Optional. Может быть пустым.
-     */
+    public ContractorJdbcRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     public Optional<Contractor> findById(String id) {
-        try {
-            Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(FIND_BY_ID,
-                    ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);
-            statement.setString(1, id);
-            try (ResultSet rs = statement.executeQuery()) {
-                return Optional.ofNullable(ContractorRowMapper.mapRow(rs));
-            }
-        } catch (SQLException throwable) {
-            throw new ContractorNotFoundException("Exception while trying to get contractor with provided id: " + id);
-        }
+        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, new Object[]{id}, (rs, rowNum) -> ContractorRowMapper.mapRow(rs)));
     }
 
 }

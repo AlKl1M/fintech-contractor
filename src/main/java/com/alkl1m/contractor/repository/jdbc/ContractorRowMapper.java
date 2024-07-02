@@ -25,47 +25,38 @@ public class ContractorRowMapper {
      * @author alkl1m
      */
     @SneakyThrows
-    public static Contractor mapRow(ResultSet resultSet) {
-        if (resultSet.next()) {
-            Contractor contractor = Contractor.builder()
-                    .id(resultSet.getString("contractor_id"))
-                    .name(resultSet.getString("contractor_name"))
-                    .nameFull(resultSet.getString("contractor_full_name"))
-                    .inn(resultSet.getString("inn"))
-                    .ogrn(resultSet.getString("ogrn"))
-                    .createDate(resultSet.getDate("create_date"))
-                    .modifyDate(resultSet.getDate("modify_date"))
-                    .createUserId(resultSet.getString("create_user_id"))
-                    .modifyUserId(resultSet.getString("modify_user_id"))
-                    .isActive(true)
-                    .build();
+    public static Contractor mapRow(ResultSet rs) {
+        Contractor contractor = new Contractor();
+        contractor.setId(rs.getString("contractor_id"));
+        contractor.setName(rs.getString("contractor_name"));
+        contractor.setNameFull(rs.getString("contractor_full_name"));
+        contractor.setInn(rs.getString("inn"));
+        contractor.setOgrn(rs.getString("ogrn"));
 
-            Country country = Country.builder()
-                    .id(resultSet.getString("country_id"))
-                    .name(resultSet.getString("country_name"))
-                    .isActive(resultSet.getBoolean("country_is_active"))
-                    .build();
+        Country country = new Country();
+        country.setId(rs.getString("country_id"));
+        country.setName(rs.getString("country_name"));
+        country.setActive(rs.getBoolean("country_is_active"));
+        contractor.setCountry(country);
 
-            Industry industry = Industry.builder()
-                    .id(resultSet.getLong("industry_id"))
-                    .name(resultSet.getString("industry_name"))
-                    .isActive(resultSet.getBoolean("industry_is_active"))
-                    .build();
+        Industry industry = new Industry();
+        industry.setId(rs.getLong("industry_id"));
+        industry.setName(rs.getString("industry_name"));
+        industry.setActive(rs.getBoolean("industry_is_active"));
+        contractor.setIndustry(industry);
 
-            OrgForm orgForm = OrgForm.builder()
-                    .id(resultSet.getLong("org_form_id"))
-                    .name(resultSet.getString("org_form_name"))
-                    .isActive(resultSet.getBoolean("org_form_is_active"))
-                    .build();
+        OrgForm orgForm = new OrgForm();
+        orgForm.setId(rs.getLong("org_form_id"));
+        orgForm.setName(rs.getString("org_form_name"));
+        orgForm.setActive(rs.getBoolean("org_form_is_active"));
+        contractor.setOrgForm(orgForm);
 
-            contractor.setCountry(country);
-            contractor.setIndustry(industry);
-            contractor.setOrgForm(orgForm);
+        contractor.setCreateDate(rs.getDate("create_date"));
+        contractor.setModifyDate(rs.getDate("modify_date"));
+        contractor.setCreateUserId(rs.getString("create_user_id"));
+        contractor.setModifyUserId(rs.getString("modify_user_id"));
 
-            return contractor;
-        }
-
-        return null;
+        return contractor;
     }
 
 }
