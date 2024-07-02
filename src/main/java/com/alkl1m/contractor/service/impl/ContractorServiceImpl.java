@@ -48,8 +48,8 @@ public class ContractorServiceImpl implements ContractorService {
      * Метод для фильтрации контрагентов.
      *
      * @param payload список фильтров.
-     * @param page номер страницы для пагинации.
-     * @param size количество элементов на страницу.
+     * @param page    номер страницы для пагинации.
+     * @param size    количество элементов на страницу.
      * @return список контрагентов, обернутый в Page.
      */
     @Override
@@ -81,7 +81,7 @@ public class ContractorServiceImpl implements ContractorService {
     /**
      * Метод для получения страницы контрагента по айди.
      *
-     * @param id контрагента.
+     * @param id       контрагента.
      * @param pageable информация о странице.
      * @return страница контрагента с учетом переданных параметров.
      */
@@ -99,7 +99,7 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public Contractor findContractorWithDetailsById(String id) {
         Optional<Contractor> optionalContractor = contractorJdbcRepository.findById(id);
-        return optionalContractor.orElseThrow(() -> new ContractorNotFoundException("Contractor not found for id: " + id));
+        return optionalContractor.orElseThrow(() -> new ContractorNotFoundException(String.format("Contractor not found for id: %s", id)));
     }
 
     /**
@@ -115,17 +115,17 @@ public class ContractorServiceImpl implements ContractorService {
             contractor.setActive(false);
             contractorRepository.save(contractor);
         }, () -> {
-            throw new ContractorNotFoundException("Contractor with id " + id + " not found");
+            throw new ContractorNotFoundException(String.format("Contractor with id %s not found", id));
         });
     }
 
     /**
      * Метод для создания нового контрагента если не передан id.
      *
-     * @param payload dto контрагента.
-     * @param country объект страны.
+     * @param payload  dto контрагента.
+     * @param country  объект страны.
      * @param industry объект индустриального кода.
-     * @param orgForm объект организационной формы.
+     * @param orgForm  объект организационной формы.
      * @return созданный контрагент.
      */
     private Contractor createNewContractor(NewContractorPayload payload, Country country, Industry industry, OrgForm orgForm) {
@@ -135,11 +135,11 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     /**
-     * @param payload информация для обновления контрагента.
+     * @param payload            информация для обновления контрагента.
      * @param existingContractor объект изменяемого контрагента.
-     * @param country объект страны.
-     * @param industry объект индустриального кода.
-     * @param orgForm объект организационной формы.
+     * @param country            объект страны.
+     * @param industry           объект индустриального кода.
+     * @param orgForm            объект организационной формы.
      * @return объект обновленного контрагента.
      */
     private Contractor updateExistingContractor(NewContractorPayload payload, Contractor existingContractor, Country country, Industry industry, OrgForm orgForm) {

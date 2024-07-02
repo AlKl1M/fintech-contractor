@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 /**
  * DTO для передачи RequestBody новой или обновленной организационной формы.
  *
- * @param id организационной формы.
+ * @param id   организационной формы.
  * @param name организационной формы.
  * @author alkl1m
  */
@@ -16,18 +16,18 @@ public record NewOrgFormPayload(
         String name
 ) {
 
-        /**
-         * Маппер для преобразования DTO организационной формы в организационную форму.
-         *
-         * @param payload DTO новой или обновляемой организационной формы.
-         * @return объект организационной формы.
-         */
-        public static OrgForm toOrgForm(NewOrgFormPayload payload) {
-                return OrgForm.builder()
-                        .id(payload.id())
-                        .name(payload.name())
-                        .isActive(true)
-                        .build();
-        }
+    /**
+     * Маппер для преобразования DTO организационной формы в организационную форму.
+     *
+     * @param payload DTO новой или обновляемой организационной формы.
+     * @return объект организационной формы.
+     */
+    public static OrgForm toOrgForm(NewOrgFormPayload payload) {
+        return OrgForm.builder()
+                .id(payload.id())
+                .name(payload.name())
+                .isActive(true)
+                .build();
+    }
 
 }

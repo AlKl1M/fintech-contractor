@@ -37,13 +37,13 @@ public class CountryServiceImpl implements CountryService {
     /**
      * Метод для поиска страны по id.
      *
-     * @param id  страны.
+     * @param id страны.
      * @return объект страны.
      */
     @Override
     public Country getCountryById(String id) {
         return countryRepository.findById(id).orElseThrow(
-                () -> new CountryNotFoundException("Country with id " + id + " not found!")
+                () -> new CountryNotFoundException(String.format("Country with id %s not found!", id))
         );
     }
 
@@ -72,7 +72,7 @@ public class CountryServiceImpl implements CountryService {
             country.setActive(false);
             countryRepository.save(country);
         }, () -> {
-            throw new CountryNotFoundException("Country with id " + id + " not found");
+            throw new CountryNotFoundException(String.format("Country with id %s not found!", id));
         });
     }
 

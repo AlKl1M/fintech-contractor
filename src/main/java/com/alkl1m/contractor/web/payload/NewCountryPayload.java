@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 /**
  * DTO для передачи RequestBody новой или обновляемой страны. ID известен.
  *
- * @param id страны.
+ * @param id   страны.
  * @param name страны.
  * @author alkl1m
  */
@@ -19,18 +19,18 @@ public record NewCountryPayload(
         String name
 ) {
 
-        /**
-         * Маппер для преобразования DTO страны в страну.
-         *
-         * @param payload DTO новой или обновляемой страны.
-         * @return объект страны.
-         */
-        public static Country toCountry(NewCountryPayload payload) {
-                return Country.builder()
-                        .id(payload.id())
-                        .name(payload.name())
-                        .isActive(true)
-                        .build();
-        }
+    /**
+     * Маппер для преобразования DTO страны в страну.
+     *
+     * @param payload DTO новой или обновляемой страны.
+     * @return объект страны.
+     */
+    public static Country toCountry(NewCountryPayload payload) {
+        return Country.builder()
+                .id(payload.id())
+                .name(payload.name())
+                .isActive(true)
+                .build();
+    }
 
 }

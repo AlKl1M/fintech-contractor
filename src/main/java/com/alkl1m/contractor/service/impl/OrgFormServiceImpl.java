@@ -43,7 +43,7 @@ public class OrgFormServiceImpl implements OrgFormService {
     @Override
     public OrgForm getOrgFormById(Long id) {
         return orgFormRepository.findById(id).orElseThrow(
-                () -> new OrgFormNotFoundException("OrgForm with id " + id + " not found")
+                () -> new OrgFormNotFoundException(String.format("OrgForm with id %d not found", id))
         );
     }
 
@@ -66,7 +66,7 @@ public class OrgFormServiceImpl implements OrgFormService {
                 orgForm.setName(payload.name());
                 return orgFormRepository.save(orgForm);
             } else {
-                throw new OrgFormNotFoundException("OrgForm with id " + payload.id() + " not found");
+                throw new OrgFormNotFoundException(String.format("OrgForm with id %d not found", payload.id()));
             }
         }
     }
@@ -84,7 +84,7 @@ public class OrgFormServiceImpl implements OrgFormService {
             orgForm.setActive(false);
             orgFormRepository.save(orgForm);
         }, () -> {
-            throw new OrgFormNotFoundException("OrgForm with id " + id + " not found");
+            throw new OrgFormNotFoundException(String.format("OrgForm with id %d not found", id));
         });
     }
 

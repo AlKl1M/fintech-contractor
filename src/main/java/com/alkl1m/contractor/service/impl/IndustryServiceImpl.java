@@ -43,7 +43,7 @@ public class IndustryServiceImpl implements IndustryService {
     @Override
     public Industry getIndustryById(Long id) {
         return industryRepository.findById(id).orElseThrow(
-                () -> new IndustryNotFoundException("Industry with id " + id + " not found")
+                () -> new IndustryNotFoundException(String.format(String.format("Industry with id %d not found", id)))
         );
     }
 
@@ -66,7 +66,7 @@ public class IndustryServiceImpl implements IndustryService {
                 industry.setName(payload.name());
                 return industryRepository.save(industry);
             } else {
-                throw new IndustryNotFoundException("Industry with id " + payload.id() + " not found");
+                throw new IndustryNotFoundException(String.format("Industry with id %d not found", payload.id()));
             }
         }
     }
@@ -84,7 +84,7 @@ public class IndustryServiceImpl implements IndustryService {
             industry.setActive(false);
             industryRepository.save(industry);
         }, () -> {
-            throw new IndustryNotFoundException("Industry with id " + id + " not found");
+            throw new IndustryNotFoundException(String.format("Industry with id %d not found", id));
         });
     }
 

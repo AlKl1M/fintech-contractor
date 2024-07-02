@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- *
  * @author alkl1m
  */
 public interface ContractorService {

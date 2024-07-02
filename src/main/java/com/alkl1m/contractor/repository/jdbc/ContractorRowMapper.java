@@ -15,10 +15,13 @@ import java.sql.ResultSet;
  */
 public class ContractorRowMapper {
 
+    private ContractorRowMapper() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * @param resultSet результат запроса в бд.
      * @return контрагент, полученный из данных из запроса.
-     *
      * @author alkl1m
      */
     @SneakyThrows
