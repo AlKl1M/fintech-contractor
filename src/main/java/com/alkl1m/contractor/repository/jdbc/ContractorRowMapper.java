@@ -4,28 +4,20 @@ import com.alkl1m.contractor.domain.entitiy.Contractor;
 import com.alkl1m.contractor.domain.entitiy.Country;
 import com.alkl1m.contractor.domain.entitiy.Industry;
 import com.alkl1m.contractor.domain.entitiy.OrgForm;
-import lombok.SneakyThrows;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Класс, который делает маппинг из результата запроса в бд в контрагент.
  *
  * @author alkl1m
  */
-public class ContractorRowMapper {
+public class ContractorRowMapper implements RowMapper<Contractor> {
 
-    private ContractorRowMapper() {
-        throw new IllegalStateException("Utility class");
-    }
-
-    /**
-     * @param resultSet результат запроса в бд.
-     * @return контрагент, полученный из данных из запроса.
-     * @author alkl1m
-     */
-    @SneakyThrows
-    public static Contractor mapRow(ResultSet rs) {
+    @Override
+    public Contractor mapRow(ResultSet rs, int rowNum) throws SQLException {
         Contractor contractor = new Contractor();
         contractor.setId(rs.getString("contractor_id"));
         contractor.setName(rs.getString("contractor_name"));

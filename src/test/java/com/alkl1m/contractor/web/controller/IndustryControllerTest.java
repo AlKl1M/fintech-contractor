@@ -29,7 +29,7 @@ class IndustryControllerTest {
                         jsonPath("$.length()").value(105),
                         jsonPath("$[0].id").exists(),
                         jsonPath("$[0].name").value("Авиастроение"),
-                        jsonPath("$[0].active").value(true)
+                        jsonPath("$[0].isActive").value(true)
                 );
     }
 
@@ -40,7 +40,7 @@ class IndustryControllerTest {
                         status().isOk(),
                         content().json(
                                 """
-                                        {"id":1,"name":"Авиастроение","active":true}
+                                        {"id":1,"name":"Авиастроение","isActive":true}
                                         """
                         )
                 );
@@ -52,7 +52,7 @@ class IndustryControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"Industry with id 100000 not found","errors":null}
+                                {"message":"Industry with id 100000 not found!","errors":null}
                                 """)
                 );
     }

@@ -1,9 +1,9 @@
 package com.alkl1m.contractor.web.controller;
 
 import com.alkl1m.auditlogspringbootautoconfigure.annotation.AuditLog;
-import com.alkl1m.contractor.domain.entitiy.OrgForm;
 import com.alkl1m.contractor.service.OrgFormService;
 import com.alkl1m.contractor.web.payload.NewOrgFormPayload;
+import com.alkl1m.contractor.web.payload.OrgFormDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +35,7 @@ public class OrgFormController {
      */
     @AuditLog
     @GetMapping("/all")
-    public List<OrgForm> getAllOrgForms() {
+    public List<OrgFormDto> getAllOrgForms() {
         return orgFormService.getAllOrgForms();
     }
 
@@ -47,7 +47,7 @@ public class OrgFormController {
      */
     @AuditLog
     @GetMapping("/{id}")
-    public OrgForm getOrgFormById(@PathVariable Long id) {
+    public OrgFormDto getOrgFormById(@PathVariable Long id) {
         return orgFormService.getOrgFormById(id);
     }
 
@@ -59,7 +59,7 @@ public class OrgFormController {
      */
     @AuditLog
     @PutMapping("/save")
-    public OrgForm saveOrgForm(@Validated @RequestBody NewOrgFormPayload payload) {
+    public OrgFormDto saveOrgForm(@Validated @RequestBody NewOrgFormPayload payload) {
         return orgFormService.saveOrgForm(payload);
     }
 

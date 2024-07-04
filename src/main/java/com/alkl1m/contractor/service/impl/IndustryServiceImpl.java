@@ -4,6 +4,7 @@ import com.alkl1m.contractor.domain.entitiy.Industry;
 import com.alkl1m.contractor.domain.exception.IndustryNotFoundException;
 import com.alkl1m.contractor.repository.IndustryRepository;
 import com.alkl1m.contractor.service.IndustryService;
+import com.alkl1m.contractor.web.payload.IndustryDto;
 import com.alkl1m.contractor.web.payload.NewIndustryPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,11 @@ public class IndustryServiceImpl implements IndustryService {
      * @return список индустриальных кодов.
      */
     @Override
-    public List<Industry> getAllIndustries() {
-        return industryRepository.findAll();
+    public List<IndustryDto> getAllIndustries() {
+        List<Industry> industries = industryRepository.findAll();
+        return industries.stream()
+                .map(IndustryDto::from)
+                .toList();
     }
 
     /**
@@ -41,10 +45,11 @@ public class IndustryServiceImpl implements IndustryService {
      * @return объект индустриального кода.
      */
     @Override
-    public Industry getIndustryById(Long id) {
-        return industryRepository.findById(id).orElseThrow(
-                () -> new IndustryNotFoundException(String.format(String.format("Industry with id %d not found", id)))
+    public IndustryDto getIndustryById(Long id) {
+        Industry industry = industryRepository.findById(id).orElseThrow(
+                () -> new IndustryNotFoundException(String.format("Industry with id %d not found!", id))
         );
+        return IndustryDto.from(industry);
     }
 
     /**
@@ -56,15 +61,15 @@ public class IndustryServiceImpl implements IndustryService {
      */
     @Override
     @Transactional
-    public Industry saveIndustry(NewIndustryPayload payload) {
+    public IndustryDto saveIndustry(NewIndustryPayload payload) {
         if (payload.id() == null) {
-            return industryRepository.save(NewIndustryPayload.toIndustry(payload));
+            return IndustryDto.from(industryRepository.save(NewIndustryPayload.toIndustry(payload)));
         } else {
             Optional<Industry> existingIndustry = industryRepository.findById(payload.id());
             if (existingIndustry.isPresent()) {
                 Industry industry = existingIndustry.get();
                 industry.setName(payload.name());
-                return industryRepository.save(industry);
+                return IndustryDto.from(industryRepository.save(industry));
             } else {
                 throw new IndustryNotFoundException(String.format("Industry with id %d not found", payload.id()));
             }

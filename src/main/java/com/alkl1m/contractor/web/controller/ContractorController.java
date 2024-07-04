@@ -1,8 +1,8 @@
 package com.alkl1m.contractor.web.controller;
 
 import com.alkl1m.auditlogspringbootautoconfigure.annotation.AuditLog;
-import com.alkl1m.contractor.domain.entitiy.Contractor;
 import com.alkl1m.contractor.service.ContractorService;
+import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class ContractorController {
      */
     @AuditLog
     @PostMapping("/search")
-    public Page<Contractor> getContractorsByParameters(
+    public Page<ContractorDto> getContractorsByParameters(
             @RequestBody ContractorFiltersPayload payload,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -57,7 +57,7 @@ public class ContractorController {
      */
     @AuditLog
     @PutMapping("/save")
-    public Contractor saveOrUpdateContractor(@Validated @RequestBody NewContractorPayload payload) {
+    public ContractorDto saveOrUpdateContractor(@Validated @RequestBody NewContractorPayload payload) {
         return contractorService.saveOrUpdate(payload);
     }
 
@@ -70,7 +70,7 @@ public class ContractorController {
      */
     @AuditLog
     @GetMapping("/{id}")
-    public Page<Contractor> getContractorPageableById(@PathVariable String id, Pageable pageable) {
+    public Page<ContractorDto> getContractorPageableById(@PathVariable String id, Pageable pageable) {
         return contractorService.getContractorPageableById(id, pageable);
     }
 
@@ -82,7 +82,7 @@ public class ContractorController {
      */
     @AuditLog
     @GetMapping("/crud/{id}")
-    public Contractor findContractorWithDetailsById(@PathVariable String id) {
+    public ContractorDto findContractorWithDetailsById(@PathVariable String id) {
         return contractorService.findContractorWithDetailsById(id);
     }
 

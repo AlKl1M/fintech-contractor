@@ -28,7 +28,7 @@ class OrgFormControllerTest {
                         jsonPath("$.length()").value(206),
                         jsonPath("$[0].id").exists(),
                         jsonPath("$[0].name").value("-"),
-                        jsonPath("$[0].active").value(true)
+                        jsonPath("$[0].isActive").value(true)
                 );
     }
 
@@ -39,7 +39,7 @@ class OrgFormControllerTest {
                         status().isOk(),
                         content().json(
                                 """
-                                        {"id":1,"name":"-","active":true}
+                                        {"id":1,"name":"-","isActive":true}
                                         """
                         )
                 );
@@ -51,7 +51,7 @@ class OrgFormControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"OrgForm with id 100000 not found","errors":null}
+                                {"message":"OrgForm with id 100000 not found!","errors":null}
                                 """)
                 );
     }

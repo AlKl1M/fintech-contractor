@@ -5,6 +5,7 @@ import com.alkl1m.contractor.domain.exception.OrgFormNotFoundException;
 import com.alkl1m.contractor.repository.OrgFormRepository;
 import com.alkl1m.contractor.service.OrgFormService;
 import com.alkl1m.contractor.web.payload.NewOrgFormPayload;
+import com.alkl1m.contractor.web.payload.OrgFormDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +31,11 @@ public class OrgFormServiceImpl implements OrgFormService {
      * @return список организационных форм.
      */
     @Override
-    public List<OrgForm> getAllOrgForms() {
-        return orgFormRepository.findAll();
+    public List<OrgFormDto> getAllOrgForms() {
+        List<OrgForm> industries = orgFormRepository.findAll();
+        return industries.stream()
+                .map(OrgFormDto::from)
+                .toList();
     }
 
     /**
@@ -41,10 +45,11 @@ public class OrgFormServiceImpl implements OrgFormService {
      * @return объект организационной формы.
      */
     @Override
-    public OrgForm getOrgFormById(Long id) {
-        return orgFormRepository.findById(id).orElseThrow(
-                () -> new OrgFormNotFoundException(String.format("OrgForm with id %d not found", id))
+    public OrgFormDto getOrgFormById(Long id) {
+        OrgForm orgForm = orgFormRepository.findById(id).orElseThrow(
+                () -> new OrgFormNotFoundException(String.format("OrgForm with id %d not found!", id))
         );
+        return OrgFormDto.from(orgForm);
     }
 
     /**
@@ -56,15 +61,15 @@ public class OrgFormServiceImpl implements OrgFormService {
      */
     @Override
     @Transactional
-    public OrgForm saveOrgForm(NewOrgFormPayload payload) {
+    public OrgFormDto saveOrgForm(NewOrgFormPayload payload) {
         if (payload.id() == null) {
-            return orgFormRepository.save(NewOrgFormPayload.toOrgForm(payload));
+            return OrgFormDto.from(orgFormRepository.save(NewOrgFormPayload.toOrgForm(payload)));
         } else {
             Optional<OrgForm> existingOrgForm = orgFormRepository.findById(payload.id());
             if (existingOrgForm.isPresent()) {
                 OrgForm orgForm = existingOrgForm.get();
                 orgForm.setName(payload.name());
-                return orgFormRepository.save(orgForm);
+                return OrgFormDto.from(orgFormRepository.save(orgForm));
             } else {
                 throw new OrgFormNotFoundException(String.format("OrgForm with id %d not found", payload.id()));
             }

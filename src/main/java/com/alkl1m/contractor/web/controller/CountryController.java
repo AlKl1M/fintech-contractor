@@ -1,8 +1,8 @@
 package com.alkl1m.contractor.web.controller;
 
 import com.alkl1m.auditlogspringbootautoconfigure.annotation.AuditLog;
-import com.alkl1m.contractor.domain.entitiy.Country;
 import com.alkl1m.contractor.service.CountryService;
+import com.alkl1m.contractor.web.payload.CountryDto;
 import com.alkl1m.contractor.web.payload.NewCountryPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +35,7 @@ public class CountryController {
      */
     @AuditLog
     @GetMapping("/all")
-    public List<Country> getAllCountries() {
+    public List<CountryDto> getAllCountries() {
         return countryService.getAllCountries();
     }
 
@@ -47,7 +47,7 @@ public class CountryController {
      */
     @AuditLog
     @GetMapping("/{id}")
-    public Country getCountryById(@PathVariable String id) {
+    public CountryDto getCountryById(@PathVariable String id) {
         return countryService.getCountryById(id);
     }
 
@@ -59,7 +59,7 @@ public class CountryController {
      */
     @AuditLog
     @PutMapping("/save")
-    public Country saveCountry(@Validated @RequestBody NewCountryPayload payload) {
+    public CountryDto saveCountry(@Validated @RequestBody NewCountryPayload payload) {
         return countryService.saveCountry(payload);
     }
 

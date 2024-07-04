@@ -18,7 +18,7 @@ public class ContractorJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final String FIND_BY_ID = """
+    private static final String FIND_BY_ID = """
             SELECT c.id AS contractor_id, c.name AS contractor_name, c.name_full AS contractor_full_name, c.inn, c.ogrn,
                    co.id AS country_id, co.name AS country_name, co.is_active AS country_is_active,
                    i.id AS industry_id, i.name AS industry_name, i.is_active AS industry_is_active,
@@ -35,8 +35,14 @@ public class ContractorJdbcRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Метод для поиска контрагентов по id без использования ОРМ.
+     *
+     * @param id уникальны идентификатор контрагента.
+     * @return опциональный объект контрагента, который может быть пустым.
+     */
     public Optional<Contractor> findById(String id) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, new Object[]{id}, (rs, rowNum) -> ContractorRowMapper.mapRow(rs)));
+        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, new ContractorRowMapper(), id));
     }
 
 }

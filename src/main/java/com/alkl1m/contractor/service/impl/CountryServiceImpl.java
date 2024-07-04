@@ -4,6 +4,7 @@ import com.alkl1m.contractor.domain.entitiy.Country;
 import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
 import com.alkl1m.contractor.repository.CountryRepository;
 import com.alkl1m.contractor.service.CountryService;
+import com.alkl1m.contractor.web.payload.CountryDto;
 import com.alkl1m.contractor.web.payload.NewCountryPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,11 @@ public class CountryServiceImpl implements CountryService {
      * @return список стран.
      */
     @Override
-    public List<Country> getAllCountries() {
-        return countryRepository.findAll();
+    public List<CountryDto> getAllCountries() {
+        List<Country> countries = countryRepository.findAll();
+        return countries.stream()
+                .map(CountryDto::from)
+                .toList();
     }
 
     /**
@@ -41,10 +45,11 @@ public class CountryServiceImpl implements CountryService {
      * @return объект страны.
      */
     @Override
-    public Country getCountryById(String id) {
-        return countryRepository.findById(id).orElseThrow(
+    public CountryDto getCountryById(String id) {
+        Country country = countryRepository.findById(id).orElseThrow(
                 () -> new CountryNotFoundException(String.format("Country with id %s not found!", id))
         );
+        return CountryDto.from(country);
     }
 
     /**
@@ -55,8 +60,9 @@ public class CountryServiceImpl implements CountryService {
      */
     @Override
     @Transactional
-    public Country saveCountry(NewCountryPayload payload) {
-        return countryRepository.save(NewCountryPayload.toCountry(payload));
+    public CountryDto saveCountry(NewCountryPayload payload) {
+        Country country = countryRepository.save(NewCountryPayload.toCountry(payload));
+        return CountryDto.from(country);
     }
 
     /**

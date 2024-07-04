@@ -64,7 +64,7 @@ class ContractorControllerTest {
                                     "modifyDate":null,
                                     "createUserId":"user1",
                                     "modifyUserId":null,
-                                    "active":true}
+                                    "isActive":true}
                                 ],
                                 "number":0,
                                 "sort":{"sorted":false,"empty":true,"unsorted":true},
@@ -122,7 +122,7 @@ class ContractorControllerTest {
                                         "orgForm":{"id":1,"name":"-","active":true},
                                         "createDate":"2021-12-31T22:00:00.000+00:00",
                                         "modifyDate":null,"createUserId":"user1",
-                                        "modifyUserId":null,"active":true}
+                                        "modifyUserId":null,"isActive":true}
                                     ],
                                 "number":0,
                                 "sort":{"sorted":false,"empty":true,"unsorted":true},
@@ -211,7 +211,7 @@ class ContractorControllerTest {
                                     "modifyDate":null,
                                     "createUserId":"user1",
                                     "modifyUserId":null,
-                                    "active":true}
+                                    "isActive":true}
                                     ],
                                 "number":0,
                                 "sort":{"sorted":false,"empty":true,"unsorted":true},
@@ -254,7 +254,7 @@ class ContractorControllerTest {
                                      "modifyDate": null,
                                      "createUserId": "user1",
                                      "modifyUserId": null,
-                                     "active": true
+                                     "isActive": true
                                  }
                                 """)
                 );

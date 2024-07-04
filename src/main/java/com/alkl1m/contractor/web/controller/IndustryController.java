@@ -1,8 +1,8 @@
 package com.alkl1m.contractor.web.controller;
 
 import com.alkl1m.auditlogspringbootautoconfigure.annotation.AuditLog;
-import com.alkl1m.contractor.domain.entitiy.Industry;
 import com.alkl1m.contractor.service.IndustryService;
+import com.alkl1m.contractor.web.payload.IndustryDto;
 import com.alkl1m.contractor.web.payload.NewIndustryPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +35,7 @@ public class IndustryController {
      */
     @AuditLog
     @GetMapping("/all")
-    public List<Industry> getAllIndustries() {
+    public List<IndustryDto> getAllIndustries() {
         return industryService.getAllIndustries();
     }
 
@@ -47,7 +47,7 @@ public class IndustryController {
      */
     @AuditLog
     @GetMapping("/{id}")
-    public Industry getIndustryById(@PathVariable Long id) {
+    public IndustryDto getIndustryById(@PathVariable Long id) {
         return industryService.getIndustryById(id);
     }
 
@@ -59,7 +59,7 @@ public class IndustryController {
      */
     @AuditLog
     @PutMapping("/save")
-    public Industry saveIndustry(@Validated @RequestBody NewIndustryPayload payload) {
+    public IndustryDto saveIndustry(@Validated @RequestBody NewIndustryPayload payload) {
         return industryService.saveIndustry(payload);
     }
 

@@ -29,7 +29,7 @@ class CountryControllerTest {
                         jsonPath("$.length()").value(254),
                         jsonPath("$[0].id").value("ABH"),
                         jsonPath("$[0].name").value("Абхазия"),
-                        jsonPath("$[0].active").value(true)
+                        jsonPath("$[0].isActive").value(true)
                 );
     }
 
@@ -40,7 +40,7 @@ class CountryControllerTest {
                         status().isOk(),
                         content().json(
                                 """
-                                        {"id":"ABH","name":"Абхазия","active":true}
+                                        {"id":"ABH","name":"Абхазия","isActive":true}
                                         """
                         )
                 );

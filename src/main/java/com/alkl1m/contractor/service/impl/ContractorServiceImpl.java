@@ -15,10 +15,12 @@ import com.alkl1m.contractor.repository.IndustryRepository;
 import com.alkl1m.contractor.repository.OrgFormRepository;
 import com.alkl1m.contractor.repository.spec.ContractorSpecifications;
 import com.alkl1m.contractor.service.ContractorService;
+import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -53,11 +56,16 @@ public class ContractorServiceImpl implements ContractorService {
      * @return список контрагентов, обернутый в Page.
      */
     @Override
-    public Page<Contractor> getContractorsByParameters(ContractorFiltersPayload payload, int page, int size) {
+    public Page<ContractorDto> getContractorsByParameters(ContractorFiltersPayload payload, int page, int size) {
         Specification<Contractor> spec = ContractorSpecifications.getContractorByParameters(payload);
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        return contractorRepository.findAll(spec, pageRequest);
+        Page<Contractor> contractorsPage = contractorRepository.findAll(spec, pageRequest);
+        List<ContractorDto> contractorDtos = contractorsPage.getContent().stream()
+                .map(ContractorDto::from)
+                .toList();
+
+        return new PageImpl<>(contractorDtos, contractorsPage.getPageable(), contractorsPage.getTotalElements());
     }
 
     /**
@@ -68,14 +76,14 @@ public class ContractorServiceImpl implements ContractorService {
      */
     @Override
     @Transactional
-    public Contractor saveOrUpdate(NewContractorPayload payload) {
+    public ContractorDto saveOrUpdate(NewContractorPayload payload) {
         Country country = countryRepository.findById(payload.country_id()).orElseThrow(() -> new CountryNotFoundException("Country not found"));
         Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
         OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
 
-        return contractorRepository.findById(payload.id())
+        return ContractorDto.from(contractorRepository.findById(payload.id())
                 .map(existingContractor -> updateExistingContractor(payload, existingContractor, country, industry, orgForm))
-                .orElseGet(() -> createNewContractor(payload, country, industry, orgForm));
+                .orElseGet(() -> createNewContractor(payload, country, industry, orgForm)));
     }
 
     /**
@@ -86,8 +94,9 @@ public class ContractorServiceImpl implements ContractorService {
      * @return страница контрагента с учетом переданных параметров.
      */
     @Override
-    public Page<Contractor> getContractorPageableById(String id, Pageable pageable) {
-        return contractorRepository.findById(id, pageable);
+    public Page<ContractorDto> getContractorPageableById(String id, Pageable pageable) {
+        Page<Contractor> contractors = contractorRepository.findById(id, pageable);
+        return contractors.map(ContractorDto::from);
     }
 
     /**
@@ -97,9 +106,11 @@ public class ContractorServiceImpl implements ContractorService {
      * @return найденный контрагент.
      */
     @Override
-    public Contractor findContractorWithDetailsById(String id) {
+    public ContractorDto findContractorWithDetailsById(String id) {
         Optional<Contractor> optionalContractor = contractorJdbcRepository.findById(id);
-        return optionalContractor.orElseThrow(() -> new ContractorNotFoundException(String.format("Contractor not found for id: %s", id)));
+        Contractor contractor = optionalContractor.orElseThrow(() -> new ContractorNotFoundException(String.format("Contractor not found for id: %s", id)));
+
+        return ContractorDto.from(contractor);
     }
 
     /**
