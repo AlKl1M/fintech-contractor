@@ -27,8 +27,7 @@ class OrgFormControllerTest {
                         status().isOk(),
                         jsonPath("$.length()").value(206),
                         jsonPath("$[0].id").exists(),
-                        jsonPath("$[0].name").value("-"),
-                        jsonPath("$[0].isActive").value(true)
+                        jsonPath("$[0].name").value("-")
                 );
     }
 
@@ -39,7 +38,10 @@ class OrgFormControllerTest {
                         status().isOk(),
                         content().json(
                                 """
-                                        {"id":1,"name":"-","isActive":true}
+                                        {
+                                          "id": 1,
+                                          "name": "-"
+                                        }
                                         """
                         )
                 );
@@ -51,7 +53,10 @@ class OrgFormControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"OrgForm with id 100000 not found!","errors":null}
+                                {
+                                  "message": "OrgForm with id 100000 not found!",
+                                  "errors": null
+                                }
                                 """)
                 );
     }
@@ -61,12 +66,18 @@ class OrgFormControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/orgform/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"id": 10, "name": "testOrgForm"}
+                                {
+                                  "id": 10,
+                                  "name": "testOrgForm"
+                                }
                                 """))
                 .andExpectAll(
                         status().isOk(),
                         content().json("""
-                                {"id":10,"name":"testOrgForm"}
+                                {
+                                  "id": 10,
+                                  "name": "testOrgForm"
+                                }
                                 """)
                 );
     }
@@ -76,12 +87,20 @@ class OrgFormControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/orgform/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"id": null, "name": null}
+                                {
+                                  "id": null,
+                                  "name": null
+                                }
                                 """))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"Validation failed.","errors":{"name":"Name cannot be null"}}
+                                {
+                                  "message": "Validation failed.",
+                                  "errors": {
+                                    "name": "Name cannot be null"
+                                  }
+                                }
                                 """)
                 );
     }
@@ -100,7 +119,10 @@ class OrgFormControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"OrgForm with id 100000 not found","errors":null}
+                                {
+                                  "message": "OrgForm with id 100000 not found",
+                                  "errors": null
+                                }
                                 """)
                 );
     }

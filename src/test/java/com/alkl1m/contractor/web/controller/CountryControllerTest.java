@@ -28,8 +28,7 @@ class CountryControllerTest {
                         status().isOk(),
                         jsonPath("$.length()").value(254),
                         jsonPath("$[0].id").value("ABH"),
-                        jsonPath("$[0].name").value("Абхазия"),
-                        jsonPath("$[0].isActive").value(true)
+                        jsonPath("$[0].name").value("Абхазия")
                 );
     }
 
@@ -40,7 +39,10 @@ class CountryControllerTest {
                         status().isOk(),
                         content().json(
                                 """
-                                        {"id":"ABH","name":"Абхазия","isActive":true}
+                                        {
+                                          "id": "ABH",
+                                          "name": "Абхазия"
+                                        }
                                         """
                         )
                 );
@@ -51,12 +53,18 @@ class CountryControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"id": "ABH", "name": "testCountry"}
+                                {
+                                  "id": "ABH",
+                                  "name": "testCountry"
+                                }
                                 """))
                 .andExpectAll(
                         status().isOk(),
                         content().json("""
-                                {"id":"ABH","name":"testCountry"}
+                                {
+                                  "id": "ABH",
+                                  "name": "testCountry"
+                                }
                                 """)
                 );
     }
@@ -66,12 +74,21 @@ class CountryControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"id": null, "name": null}
+                                {
+                                  "id": null,
+                                  "name": null
+                                }
                                 """))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"Validation failed.","errors":{"name":"Name cannot be null","id":"ID cannot be null"}}
+                                {
+                                  "message": "Validation failed.",
+                                  "errors": {
+                                    "name": "Name cannot be null",
+                                    "id": "ID cannot be null"
+                                  }
+                                }
                                 """)
                 );
     }

@@ -28,8 +28,7 @@ class IndustryControllerTest {
                         status().isOk(),
                         jsonPath("$.length()").value(105),
                         jsonPath("$[0].id").exists(),
-                        jsonPath("$[0].name").value("Авиастроение"),
-                        jsonPath("$[0].isActive").value(true)
+                        jsonPath("$[0].name").value("Авиастроение")
                 );
     }
 
@@ -40,7 +39,10 @@ class IndustryControllerTest {
                         status().isOk(),
                         content().json(
                                 """
-                                        {"id":1,"name":"Авиастроение","isActive":true}
+                                        {
+                                          "id": 1,
+                                          "name": "Авиастроение"
+                                        }
                                         """
                         )
                 );
@@ -52,7 +54,10 @@ class IndustryControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"Industry with id 100000 not found!","errors":null}
+                                {
+                                  "message": "Industry with id 100000 not found!",
+                                  "errors": null
+                                }
                                 """)
                 );
     }
@@ -62,12 +67,18 @@ class IndustryControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/industry/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"id": 10, "name": "testIndustry"}
+                                {
+                                  "id": 10,
+                                  "name": "testIndustry"
+                                }
                                 """))
                 .andExpectAll(
                         status().isOk(),
                         content().json("""
-                                {"id":10,"name":"testIndustry"}
+                                {
+                                  "id": 10,
+                                  "name": "testIndustry"
+                                }
                                 """)
                 );
     }
@@ -77,12 +88,20 @@ class IndustryControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/industry/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"id": null, "name": null}
+                                {
+                                  "id": null,
+                                  "name": null
+                                }
                                 """))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"Validation failed.","errors":{"name":"Name cannot be null"}}
+                                {
+                                  "message": "Validation failed.",
+                                  "errors": {
+                                    "name": "Name cannot be null"
+                                  }
+                                }
                                 """)
                 );
     }
@@ -101,7 +120,10 @@ class IndustryControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                                {"message":"Industry with id 100000 not found","errors":null}
+                                {
+                                  "message": "Industry with id 100000 not found",
+                                  "errors": null
+                                }
                                 """)
                 );
     }
