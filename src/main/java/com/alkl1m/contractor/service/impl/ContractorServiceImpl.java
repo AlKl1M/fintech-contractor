@@ -17,11 +17,11 @@ import com.alkl1m.contractor.repository.spec.ContractorSpecifications;
 import com.alkl1m.contractor.service.ContractorService;
 import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
+import com.alkl1m.contractor.web.payload.ContractorsDto;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -48,25 +48,39 @@ public class ContractorServiceImpl implements ContractorService {
     private final OrgFormRepository orgFormRepository;
 
     /**
-     * Метод для фильтрации контрагентов.
+     * Поиск контрагента по заданным параметрам.
      *
-     * @param payload список фильтров.
-     * @param page    номер страницы для пагинации.
-     * @param size    количество элементов на страницу.
-     * @return список контрагентов, обернутый в Page.
+     * @param payload  список фильтров для выборки.
+     * @param pageable объект пагинации.
+     * @return DTO содержащее список пагинированных контрагентов.
      */
-    @Override
-    public Page<ContractorDto> getContractorsByParameters(ContractorFiltersPayload payload, int page, int size) {
+    public ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable) {
         Specification<Contractor> spec = ContractorSpecifications.getContractorByParameters(payload);
-        PageRequest pageRequest = PageRequest.of(page, size);
 
-        Page<Contractor> contractorsPage = contractorRepository.findAll(spec, pageRequest);
-        List<ContractorDto> contractorDtos = contractorsPage.getContent().stream()
+        Page<Contractor> contractorsPage = contractorRepository.findAll(spec, pageable);
+
+        List<ContractorDto> contractorDtos = contractorsPage.getContent()
+                .stream()
                 .map(ContractorDto::from)
                 .toList();
 
-        return new PageImpl<>(contractorDtos, contractorsPage.getPageable(), contractorsPage.getTotalElements());
+        return new ContractorsDto(new PageImpl<>(contractorDtos, contractorsPage.getPageable(), contractorsPage.getTotalElements()));
     }
+
+    /**
+     * Поиск контрагента по заданным параметрам.
+     *
+     * @param payload  список фильтров для выборки.
+     * @param pageable объект пагинации.
+     * @return DTO содержащее список пагинированных контрагентов.
+     */
+    @Override
+    public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable) {
+        Page<ContractorDto> contractors = contractorJdbcRepository.getContractorByParameters(payload, pageable);
+
+        return ContractorsDto.from(contractors);
+    }
+
 
     /**
      * Создает контрагент, если в dto не передан id, и обновляет в противном случае.
@@ -87,29 +101,16 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     /**
-     * Метод для получения страницы контрагента по айди.
+     * Получение контрагента по ID.
      *
-     * @param id       контрагента.
-     * @param pageable информация о странице.
-     * @return страница контрагента с учетом переданных параметров.
+     * @param id ID по которому идет поиск контрагента.
+     * @return контрагент, удовлетворяющий условию.
      */
     @Override
-    public Page<ContractorDto> getContractorPageableById(String id, Pageable pageable) {
-        Page<Contractor> contractors = contractorRepository.findById(id, pageable);
-        return contractors.map(ContractorDto::from);
-    }
-
-    /**
-     * Поиск контрагента без использования ОРМ через jdbc.
-     *
-     * @param id контрагента
-     * @return найденный контрагент.
-     */
-    @Override
-    public ContractorDto findContractorWithDetailsById(String id) {
-        Optional<Contractor> optionalContractor = contractorJdbcRepository.findById(id);
-        Contractor contractor = optionalContractor.orElseThrow(() -> new ContractorNotFoundException(String.format("Contractor not found for id: %s", id)));
-
+    public ContractorDto findById(String id) {
+        Contractor contractor = contractorRepository.findById(id).orElseThrow(
+                () -> new ContractorNotFoundException(String.format("Contractor with id %s not found!", id))
+        );
         return ContractorDto.from(contractor);
     }
 

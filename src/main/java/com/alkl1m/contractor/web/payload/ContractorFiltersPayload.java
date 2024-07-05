@@ -1,7 +1,5 @@
 package com.alkl1m.contractor.web.payload;
 
-import com.alkl1m.contractor.domain.entitiy.Industry;
-
 /**
  * DTO для передачи RequestBody списка фильтрации контрагентов.
  *
@@ -22,6 +20,6 @@ public record ContractorFiltersPayload(String id,
                                        String inn,
                                        String ogrn,
                                        String countryName,
-                                       Industry industry,
+                                       IndustryDto industry,
                                        String orgFormName) {
 }

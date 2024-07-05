@@ -65,8 +65,8 @@ public final class ContractorSpecifications {
 
             if (payload.industry() != null) {
                 Join<Contractor, Industry> industryJoin = root.join("industry");
-                predicates.add(criteriaBuilder.equal(industryJoin.get("id"), payload.industry().getId()));
-                predicates.add(criteriaBuilder.equal(industryJoin.get("name"), payload.industry().getName()));
+                predicates.add(criteriaBuilder.equal(industryJoin.get("id"), payload.industry().id()));
+                predicates.add(criteriaBuilder.equal(industryJoin.get("name"), payload.industry().name()));
             }
 
             if (payload.orgFormName() != null) {

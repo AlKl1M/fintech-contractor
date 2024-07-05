@@ -4,7 +4,15 @@ import com.alkl1m.auditlogspringbootautoconfigure.annotation.AuditLog;
 import com.alkl1m.contractor.service.CountryService;
 import com.alkl1m.contractor.web.payload.CountryDto;
 import com.alkl1m.contractor.web.payload.NewCountryPayload;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +29,7 @@ import java.util.List;
  *
  * @author alkl1m
  */
+@Tag(name = "country", description = "The Country API")
 @RestController
 @RequestMapping("/country")
 @RequiredArgsConstructor
@@ -33,10 +42,22 @@ public class CountryController {
      *
      * @return список всех стран.
      */
+    @Operation(summary = "Получение списка всех стран", tags = "country")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Получил список всех стран",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = CountryDto.class)))
+                    })
+    })
     @AuditLog
     @GetMapping("/all")
-    public List<CountryDto> getAllCountries() {
-        return countryService.getAllCountries();
+    public ResponseEntity<List<CountryDto>> getAllCountries() {
+        List<CountryDto> countries = countryService.getAllCountries();
+        return ResponseEntity.ok(countries);
     }
 
     /**
@@ -45,10 +66,22 @@ public class CountryController {
      * @param id идентификатор страны.
      * @return найденная страна.
      */
+    @Operation(summary = "Получение страны по ID", tags = "country")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Нашел страну по переданному ID",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = CountryDto.class)))
+                    })
+    })
     @AuditLog
     @GetMapping("/{id}")
-    public CountryDto getCountryById(@PathVariable String id) {
-        return countryService.getCountryById(id);
+    public ResponseEntity<CountryDto> getCountryById(@PathVariable String id) {
+        CountryDto country = countryService.getCountryById(id);
+        return ResponseEntity.ok(country);
     }
 
     /**
@@ -57,10 +90,22 @@ public class CountryController {
      * @param payload объект с данными новой страны.
      * @return сохраненная или обновленная страна.
      */
+    @Operation(summary = "Сохранение/обновление страны", tags = "country")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Создал/обновил страну ",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = CountryDto.class)))
+                    })
+    })
     @AuditLog
     @PutMapping("/save")
-    public CountryDto saveCountry(@Validated @RequestBody NewCountryPayload payload) {
-        return countryService.saveCountry(payload);
+    public ResponseEntity<CountryDto> saveCountry(@Validated @RequestBody NewCountryPayload payload) {
+        CountryDto savedCountry = countryService.saveCountry(payload);
+        return ResponseEntity.ok(savedCountry);
     }
 
     /**
@@ -68,10 +113,22 @@ public class CountryController {
      *
      * @param id идентификатор страны.
      */
+    @Operation(summary = "Удаление страны по ID", tags = "country")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Удалил страну по ID",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = CountryDto.class)))
+                    })
+    })
     @AuditLog
     @DeleteMapping("/delete/{id}")
-    public void deleteCountry(@PathVariable String id) {
+    public ResponseEntity<Void> deleteCountry(@PathVariable String id) {
         countryService.deleteCountry(id);
+        return ResponseEntity.ok().build();
     }
 
 }

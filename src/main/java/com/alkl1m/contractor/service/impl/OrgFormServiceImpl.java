@@ -26,13 +26,13 @@ public class OrgFormServiceImpl implements OrgFormService {
     private final OrgFormRepository orgFormRepository;
 
     /**
-     * Метод для получения всех организационных форм.
+     * Метод для получения всех активных организационных форм.
      *
      * @return список организационных форм.
      */
     @Override
     public List<OrgFormDto> getAllOrgForms() {
-        List<OrgForm> industries = orgFormRepository.findAll();
+        List<OrgForm> industries = orgFormRepository.findAllByIsActiveTrue();
         return industries.stream()
                 .map(OrgFormDto::from)
                 .toList();

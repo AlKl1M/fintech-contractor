@@ -26,13 +26,13 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
 
     /**
-     * Метод для получения всех стран.
+     * Метод для получения всех активных стран.
      *
      * @return список стран.
      */
     @Override
     public List<CountryDto> getAllCountries() {
-        List<Country> countries = countryRepository.findAll();
+        List<Country> countries = countryRepository.findAllByIsActiveTrue();
         return countries.stream()
                 .map(CountryDto::from)
                 .toList();

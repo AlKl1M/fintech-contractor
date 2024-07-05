@@ -2,6 +2,7 @@ package com.alkl1m.contractor.service;
 
 import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
+import com.alkl1m.contractor.web.payload.ContractorsDto;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,13 +12,13 @@ import org.springframework.data.domain.Pageable;
  */
 public interface ContractorService {
 
-    Page<ContractorDto> getContractorsByParameters(ContractorFiltersPayload payload, int page, int size);
+    ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable);
+
+    ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable);
 
     ContractorDto saveOrUpdate(NewContractorPayload payload);
 
-    Page<ContractorDto> getContractorPageableById(String id, Pageable pageable);
-
-    ContractorDto findContractorWithDetailsById(String id);
+    ContractorDto findById(String id);
 
     void deleteContractorById(String id);
 

@@ -4,10 +4,19 @@ import com.alkl1m.auditlogspringbootautoconfigure.annotation.AuditLog;
 import com.alkl1m.contractor.service.ContractorService;
 import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
+import com.alkl1m.contractor.web.payload.ContractorsDto;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author alkl1m
  */
+
+@Tag(name = "contractor", description = "The Contractor API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/contractor")
@@ -32,69 +43,134 @@ public class ContractorController {
     private final ContractorService contractorService;
 
     /**
-     * Метод для поиска исполнителей контрагентов по заданным параметрам.
+     * Получение контрагентов по заданным параметрам.
      *
-     * @param payload объект, содержащий фильтры для поиска контрагентов.
-     * @param page    номер страницы результатов (по умолчанию 0).
-     * @param size    количество элементов на странице (по умолчанию 10).
-     * @return страница с найденными контрагентами.
+     * @param payload фильтры для поиска контрагента.
+     * @param page    номер страницы.
+     * @param size    размер страницы.
+     * @return ReponseEntity с найденными пагинированными контрагентами.
      */
+    @Operation(summary = "Получение контрагента по заданным параметрам", tags = "contractor")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Нашел контрагента по заданным параметрам",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = ContractorsDto.class)))
+                    })
+    })
     @AuditLog
     @PostMapping("/search")
-    public Page<ContractorDto> getContractorsByParameters(
+    public ResponseEntity<ContractorsDto> getContractorsByParameters(
             @RequestBody ContractorFiltersPayload payload,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "10", required = false) Integer size
     ) {
-        return contractorService.getContractorsByParameters(payload, page, size);
+        Pageable paging = PageRequest.of(page, size);
+        ContractorsDto contractorPage = contractorService.getContractorsByParameters(payload, paging);
+        return ResponseEntity.ok().body(contractorPage);
     }
 
     /**
-     * Метод для сохранения или обновления контрагента с использованием аннотации @AuditLog.
+     * Получение контрагентов по заданным параметрам с помощью нативного запроса.
      *
-     * @param payload объект с данными нового контрагента.
-     * @return сохраненный или обновленный контрагент.
+     * @param payload фильтры для поиска контрагента.
+     * @param page    номер страницы.
+     * @param size    размер страницы.
+     * @return ReponseEntity с найденными пагинированными контрагентами.
      */
-    @AuditLog
-    @PutMapping("/save")
-    public ContractorDto saveOrUpdateContractor(@Validated @RequestBody NewContractorPayload payload) {
-        return contractorService.saveOrUpdate(payload);
+    @Operation(summary = "Получение контрагента по заданным параметрам с помощью нативного запроса", tags = "contractor")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Нашел контрагента по заданным параметрам",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = ContractorsDto.class)))
+                    })
+    })
+    @PostMapping("/crud/search")
+    public ResponseEntity<ContractorsDto> getContractorPageableByIdd(
+            @RequestBody ContractorFiltersPayload payload,
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "10", required = false) Integer size
+    ) {
+        Pageable paging = PageRequest.of(page, size);
+        ContractorsDto contractorsPage = contractorService.getContractorsWithCrudByParameters(payload, paging);
+        return ResponseEntity.ok().body(contractorsPage);
     }
 
     /**
-     * Метод для получения страницы с контрагентами по их идентификатору с использованием аннотации @AuditLog.
+     * Получение контрагента по ID.
      *
-     * @param id       идентификатор контрагента.
-     * @param pageable параметры страницы.
-     * @return страница с найденными контрагентами.
+     * @param id ID контрагента.
+     * @return ResponseEntity с найденным контрагентом.
      */
+    @Operation(summary = "Получение контрагента по ID", tags = "contractor")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Получил контрагента по ID",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = ContractorDto.class)))
+                    })
+    })
     @AuditLog
     @GetMapping("/{id}")
-    public Page<ContractorDto> getContractorPageableById(@PathVariable String id, Pageable pageable) {
-        return contractorService.getContractorPageableById(id, pageable);
+    public ResponseEntity<ContractorDto> getContractorById(@PathVariable String id) {
+        ContractorDto contractor = contractorService.findById(id);
+        return ResponseEntity.ok(contractor);
     }
 
     /**
-     * Метод для поиска контрагента с деталями по идентификатору с использованием аннотации @AuditLog.
+     * Сохранение или обновление контрагента в зависимости от ID.
      *
-     * @param id идентификатор контрагента.
-     * @return найденный контрагент с деталями.
+     * @param payload Данные нового контрагента.
+     * @return ResponseEntity с сохраненным или обновленным контрагентом.
      */
+    @Operation(summary = "Сохранение или обновление контрагента в зависимости от ID", tags = "contractor")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Сохранил/обновил контрагента",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = ContractorDto.class)))
+                    })
+    })
     @AuditLog
-    @GetMapping("/crud/{id}")
-    public ContractorDto findContractorWithDetailsById(@PathVariable String id) {
-        return contractorService.findContractorWithDetailsById(id);
+    @PutMapping("/save")
+    public ResponseEntity<ContractorDto> saveOrUpdateContractor(@Validated @RequestBody NewContractorPayload payload) {
+        ContractorDto savedContractor = contractorService.saveOrUpdate(payload);
+        return ResponseEntity.ok(savedContractor);
     }
 
     /**
-     * Метод для удаления контрагента по идентификатору с использованием аннотации @AuditLog.
-     *
-     * @param id идентификатор контрагента.
+     * @param id ID контрагента.
+     * @return ResponseEntity с результатом удаления.
      */
+    @Operation(summary = "Удаление контрагента по ID", tags = "contractor")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Удалил контрагента по ID",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = ContractorDto.class)))
+                    })
+    })
     @AuditLog
     @DeleteMapping("/delete/{id}")
-    public void deleteContractorById(@PathVariable String id) {
+    public ResponseEntity<Void> deleteContractorById(@PathVariable String id) {
         contractorService.deleteContractorById(id);
+        return ResponseEntity.ok().build();
     }
 
 }

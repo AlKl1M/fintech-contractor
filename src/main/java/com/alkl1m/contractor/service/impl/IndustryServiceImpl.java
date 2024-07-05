@@ -26,13 +26,13 @@ public class IndustryServiceImpl implements IndustryService {
     private final IndustryRepository industryRepository;
 
     /**
-     * Метод для получения всех индустриальных кодов.
+     * Метод для получения всех активных индустриальных кодов.
      *
      * @return список индустриальных кодов.
      */
     @Override
     public List<IndustryDto> getAllIndustries() {
-        List<Industry> industries = industryRepository.findAll();
+        List<Industry> industries = industryRepository.findAllByIsActiveTrue();
         return industries.stream()
                 .map(IndustryDto::from)
                 .toList();

@@ -1,12 +1,21 @@
 package com.alkl1m.contractor.web.payload;
 
 import com.alkl1m.contractor.domain.entitiy.Contractor;
-import com.alkl1m.contractor.domain.entitiy.Country;
-import com.alkl1m.contractor.domain.entitiy.Industry;
-import com.alkl1m.contractor.domain.entitiy.OrgForm;
 
-import java.util.Date;
-
+/**
+ * DTO для контрагентов без вспомогательных полей.
+ *
+ * @param id       контрагента.
+ * @param parentId контрагента.
+ * @param name     контрагента.
+ * @param nameFull контрагента.
+ * @param inn      контрагента.
+ * @param ogrn     контрагента.
+ * @param country  контрагента.
+ * @param industry контрагента.
+ * @param orgForm  контрагента.
+ * @author alkl1m
+ */
 public record ContractorDto(
         String id,
         String parentId,
@@ -14,16 +23,17 @@ public record ContractorDto(
         String nameFull,
         String inn,
         String ogrn,
-        Country country,
-        Industry industry,
-        OrgForm orgForm,
-        Date createDate,
-        Date modifyDate,
-        String createUserId,
-        String modifyUserId,
-        boolean isActive
+        CountryDto country,
+        IndustryDto industry,
+        OrgFormDto orgForm
 ) {
 
+    /**
+     * DTO для получения контрагента без вспомогательных полей.
+     *
+     * @param contractor контрагент, из которого собираем DTO.
+     * @return DTO контрагента.
+     */
     public static ContractorDto from(Contractor contractor) {
         return new ContractorDto(
                 contractor.getId(),
@@ -32,14 +42,9 @@ public record ContractorDto(
                 contractor.getNameFull(),
                 contractor.getInn(),
                 contractor.getOgrn(),
-                contractor.getCountry(),
-                contractor.getIndustry(),
-                contractor.getOrgForm(),
-                contractor.getCreateDate(),
-                contractor.getModifyDate(),
-                contractor.getCreateUserId(),
-                contractor.getModifyUserId(),
-                contractor.isActive()
+                CountryDto.from(contractor.getCountry()),
+                IndustryDto.from(contractor.getIndustry()),
+                OrgFormDto.from(contractor.getOrgForm())
         );
     }
 
