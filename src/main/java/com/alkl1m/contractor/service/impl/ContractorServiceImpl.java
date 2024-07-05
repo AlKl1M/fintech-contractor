@@ -76,9 +76,14 @@ public class ContractorServiceImpl implements ContractorService {
      */
     @Override
     public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable) {
-        Page<ContractorDto> contractors = contractorJdbcRepository.getContractorByParameters(payload, pageable);
+        Page<Contractor> contractorsPage = contractorJdbcRepository.getContractorByParameters(payload, pageable);
 
-        return ContractorsDto.from(contractors);
+        List<ContractorDto> contractorDtos = contractorsPage.getContent()
+                .stream()
+                .map(ContractorDto::from)
+                .toList();
+
+        return new ContractorsDto(new PageImpl<>(contractorDtos, contractorsPage.getPageable(), contractorsPage.getTotalElements()));
     }
 
 
