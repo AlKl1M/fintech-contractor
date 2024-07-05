@@ -41,7 +41,7 @@ public class OrgFormController {
     /**
      * Метод для получения списка всех организационных форм с использованием аннотации @AuditLog.
      *
-     * @return список всех организационных форм.
+     * @return ResponseEntity список всех организационных форм.
      */
     @Operation(summary = "Получение списка всех организационных форм", tags = "orgform")
     @ApiResponses(value = {
@@ -65,7 +65,7 @@ public class OrgFormController {
      * Метод для получения организационной формы по идентификатору с использованием аннотации @AuditLog.
      *
      * @param id идентификатор организационной формы.
-     * @return найденная организационная форма.
+     * @return ResponseEntity с найденной организационная форма.
      */
     @Operation(summary = "Получение организационной формы по ID", tags = "orgform")
     @ApiResponses(value = {
@@ -89,7 +89,7 @@ public class OrgFormController {
      * Метод для сохранения или обновления формы организации с использованием аннотации @AuditLog.
      *
      * @param payload объект с данными новой организационной формы.
-     * @return сохраненная или обновленная организационная форма.
+     * @return ResponseEntity с сохраненной или обновленной организационной формой.
      */
 
     @Operation(summary = "Сохранение/обновление организационной формы", tags = "orgform")
@@ -114,6 +114,7 @@ public class OrgFormController {
      * Метод для удаления организационной формы по идентификатору с использованием аннотации @AuditLog.
      *
      * @param id идентификатор организационной формы.
+     * @return ResponseEntity с результатом удаления.
      */
     @Operation(summary = "Удаление организационной формы по ID", tags = "orgform")
     @ApiResponses(value = {

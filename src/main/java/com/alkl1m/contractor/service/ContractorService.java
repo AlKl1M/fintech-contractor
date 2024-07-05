@@ -4,7 +4,6 @@ import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.ContractorsDto;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**

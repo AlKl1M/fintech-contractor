@@ -40,7 +40,7 @@ public class IndustryController {
     /**
      * Метод для получения списка всех индустриальных кодов с использованием аннотации @AuditLog.
      *
-     * @return список всех индустриальных кодов.
+     * @return ResponseEntity список всех индустриальных кодов.
      */
     @Operation(summary = "Получение списка всех индустриальных кодов", tags = "industry")
     @ApiResponses(value = {
@@ -64,7 +64,7 @@ public class IndustryController {
      * Метод для получения индустриального кода по идентификатору с использованием аннотации @AuditLog.
      *
      * @param id идентификатор индустриального кода.
-     * @return найденный индустриального кода.
+     * @return ResponseEntity с найденным индустриальным кодом.
      */
     @Operation(summary = "Получение индустриального кода по ID", tags = "industry")
     @ApiResponses(value = {
@@ -87,8 +87,8 @@ public class IndustryController {
     /**
      * Метод для сохранения или обновления индустриального кода с использованием аннотации @AuditLog.
      *
-     * @param payload объект с данными нового индустриального кода
-     * @return сохраненный или обновленный индустриальный код.
+     * @param payload объект с данными нового индустриального кода.
+     * @return @return ResponseEntity с сохраненным или обновленным индустриальным кодом.
      */
     @Operation(summary = "Сохранение/обновление индустриального кода", tags = "industry")
     @ApiResponses(value = {
@@ -112,6 +112,7 @@ public class IndustryController {
      * Метод для удаления индустриального кода по идентификатору с использованием аннотации @AuditLog.
      *
      * @param id идентификатор индустриального кода.
+     * @return ResponseEntity с результатом удаления.
      */
     @Operation(summary = "Удаление индустриального кода по ID", tags = "industry")
     @ApiResponses(value = {

@@ -92,6 +92,7 @@ public class ContractorController {
                                     array = @ArraySchema(schema = @Schema(implementation = ContractorsDto.class)))
                     })
     })
+    @AuditLog
     @PostMapping("/crud/search")
     public ResponseEntity<ContractorsDto> getContractorPageableByIdd(
             @RequestBody ContractorFiltersPayload payload,

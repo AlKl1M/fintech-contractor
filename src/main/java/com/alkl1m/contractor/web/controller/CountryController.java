@@ -40,7 +40,7 @@ public class CountryController {
     /**
      * Метод для получения списка всех стран с использованием аннотации @AuditLog.
      *
-     * @return список всех стран.
+     * @return ResponseEntity список всех пагинированных стран.
      */
     @Operation(summary = "Получение списка всех стран", tags = "country")
     @ApiResponses(value = {
@@ -64,7 +64,7 @@ public class CountryController {
      * Метод для получения страны по идентификатору с использованием аннотации @AuditLog.
      *
      * @param id идентификатор страны.
-     * @return найденная страна.
+     * @return ResponseEntity с найденной страной.
      */
     @Operation(summary = "Получение страны по ID", tags = "country")
     @ApiResponses(value = {
@@ -88,7 +88,7 @@ public class CountryController {
      * Метод для сохранения или обновления страны с использованием аннотации @AuditLog.
      *
      * @param payload объект с данными новой страны.
-     * @return сохраненная или обновленная страна.
+     * @return ResponseEntity с сохраненной или обновленной страной.
      */
     @Operation(summary = "Сохранение/обновление страны", tags = "country")
     @ApiResponses(value = {
@@ -112,6 +112,7 @@ public class CountryController {
      * Метод для удаления страны по идентификатору с использованием аннотации @AuditLog.
      *
      * @param id идентификатор страны.
+     * @return ResponseEntity с результатом удаления.
      */
     @Operation(summary = "Удаление страны по ID", tags = "country")
     @ApiResponses(value = {
