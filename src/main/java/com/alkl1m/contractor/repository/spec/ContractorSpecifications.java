@@ -5,8 +5,10 @@ import com.alkl1m.contractor.domain.entitiy.Country;
 import com.alkl1m.contractor.domain.entitiy.Industry;
 import com.alkl1m.contractor.domain.entitiy.OrgForm;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
@@ -34,29 +36,13 @@ public final class ContractorSpecifications {
 
             predicates.add(criteriaBuilder.isTrue(root.get("isActive")));
 
-            if (payload.id() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("id"), payload.id()));
-            }
+            addEqualPredicate(predicates, root, criteriaBuilder, "id", payload.id());
+            addEqualPredicate(predicates, root, criteriaBuilder, "parentId", payload.parentId());
 
-            if (payload.parentId() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("parentId"), payload.parentId()));
-            }
-
-            if (payload.name() != null) {
-                predicates.add(criteriaBuilder.like(root.get("name"), payload.name()));
-            }
-
-            if (payload.nameFull() != null) {
-                predicates.add(criteriaBuilder.like(root.get("nameFull"), payload.nameFull()));
-            }
-
-            if (payload.inn() != null) {
-                predicates.add(criteriaBuilder.like(root.get("inn"), payload.inn()));
-            }
-
-            if (payload.ogrn() != null) {
-                predicates.add(criteriaBuilder.like(root.get("ogrn"), payload.ogrn()));
-            }
+            addLikePredicate(predicates, root, criteriaBuilder, "name", payload.name());
+            addLikePredicate(predicates, root, criteriaBuilder, "nameFull", payload.nameFull());
+            addLikePredicate(predicates, root, criteriaBuilder, "inn", payload.inn());
+            addLikePredicate(predicates, root, criteriaBuilder, "ogrn", payload.ogrn());
 
             if (payload.countryName() != null) {
                 Join<Contractor, Country> countryJoin = root.join("country");
@@ -76,6 +62,18 @@ public final class ContractorSpecifications {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    private static void addLikePredicate(List<Predicate> predicates, Root<Contractor> root, CriteriaBuilder criteriaBuilder, String field, String value) {
+        if (value != null) {
+            predicates.add(criteriaBuilder.like(root.get(field), value));
+        }
+    }
+
+    private static void addEqualPredicate(List<Predicate> predicates, Root<Contractor> root, CriteriaBuilder criteriaBuilder, String field, String value) {
+        if (value != null) {
+            predicates.add(criteriaBuilder.equal(root.get(field), value));
+        }
     }
 
 }

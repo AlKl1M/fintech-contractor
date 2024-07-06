@@ -10,6 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 
 import java.util.Date;
 
@@ -25,15 +28,21 @@ import java.util.Date;
 public class Contractor {
 
     @Id
+    @Column(updatable = false, nullable = false)
     private String id;
+
     @Column(name = "parent_id")
     private String parentId;
-    @Column(name = "name")
+
+    @Column(name = "name", nullable = false)
     private String name;
+
     @Column(name = "name_full")
     private String nameFull;
+
     @Column(name = "inn")
     private String inn;
+
     @Column(name = "ogrn")
     private String ogrn;
 
@@ -49,15 +58,23 @@ public class Contractor {
     @JoinColumn(name = "org_form")
     private OrgForm orgForm;
 
-    @Column(name = "create_date")
+    @CreatedDate
+    @Column(name = "create_date", updatable = false, nullable = false)
     private Date createDate;
+
+    @LastModifiedBy
     @Column(name = "modify_date")
     private Date modifyDate;
-    @Column(name = "create_user_id")
+
+    @CreatedBy
+    @Column(name = "create_user_id", updatable = false, nullable = false)
     private String createUserId;
+
+    @LastModifiedBy
     @Column(name = "modify_user_id")
     private String modifyUserId;
-    @Column(name = "is_active")
+
+    @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
 }

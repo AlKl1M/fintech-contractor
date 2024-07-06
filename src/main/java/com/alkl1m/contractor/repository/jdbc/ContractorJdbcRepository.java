@@ -47,46 +47,34 @@ public class ContractorJdbcRepository {
     public Page<Contractor> getContractorByParameters(ContractorFiltersPayload payload, Pageable pageable) {
         StringBuilder queryBuilder = new StringBuilder(FIND_BY_IS_ACTIVE);
 
-        if (payload.id() != null) {
-            queryBuilder.append("AND c.id = '").append(payload.id()).append("' ");
-        }
+        addEqualFilterCondition(queryBuilder, "c.id", payload.id());
+        addEqualFilterCondition(queryBuilder, "c.parent_id", payload.parentId());
+        addLikeFilterCondition(queryBuilder, "c.name", payload.name());
+        addLikeFilterCondition(queryBuilder, "c.name_full", payload.nameFull());
+        addLikeFilterCondition(queryBuilder, "c.inn", payload.inn());
+        addLikeFilterCondition(queryBuilder, "c.ogrn", payload.ogrn());
+        addLikeFilterCondition(queryBuilder, "co.name", payload.countryName());
+        addEqualFilterCondition(queryBuilder, "i.id", payload.industry() != null ? payload.industry().id() : null);
+        addEqualFilterCondition(queryBuilder, "i.name", payload.industry() != null ? payload.industry().name() : null);
+        addLikeFilterCondition(queryBuilder, "o.name", payload.orgFormName());
 
-        if (payload.parentId() != null) {
-            queryBuilder.append("AND c.parent_id = '").append(payload.parentId()).append("' ");
-        }
+        queryBuilder.append("LIMIT ").append(pageable.getPageSize()).append(" OFFSET ").append(pageable.getPageNumber() * pageable.getPageSize());
 
-        if (payload.name() != null) {
-            queryBuilder.append("AND c.name LIKE '%").append(payload.name()).append("%' ");
-        }
-
-        if (payload.nameFull() != null) {
-            queryBuilder.append("AND c.name_full LIKE '%").append(payload.nameFull()).append("%' ");
-        }
-
-        if (payload.inn() != null) {
-            queryBuilder.append("AND c.inn LIKE '%").append(payload.inn()).append("%' ");
-        }
-
-        if (payload.ogrn() != null) {
-            queryBuilder.append("AND c.ogrn LIKE '%").append(payload.ogrn()).append("%' ");
-        }
-
-        if (payload.countryName() != null) {
-            queryBuilder.append("AND co.name LIKE '%").append(payload.countryName()).append("%' ");
-        }
-
-        if (payload.industry() != null) {
-            queryBuilder.append("AND i.id = '").append(payload.industry().id()).append("' ");
-            queryBuilder.append("AND i.name = '").append(payload.industry().name()).append("' ");
-        }
-
-        if (payload.orgFormName() != null) {
-            queryBuilder.append("AND o.name LIKE '%").append(payload.orgFormName()).append("%' ");
-        }
-
-        queryBuilder.append("LIMIT ").append(pageable.getPageSize()).append(" OFFSET ").append(pageable.getPageNumber() * pageable.getPageNumber());
         List<Contractor> contractors = jdbcTemplate.query(queryBuilder.toString(), new ContractorRowMapper());
+
         return new PageImpl<>(contractors, pageable, contractors.size());
+    }
+
+    private void addLikeFilterCondition(StringBuilder queryBuilder, String field, String value) {
+        if (value != null) {
+            queryBuilder.append("AND ").append(field).append(" LIKE '%").append(value).append("%' ");
+        }
+    }
+
+    private void addEqualFilterCondition(StringBuilder queryBuilder, String field, Object value) {
+        if (value != null) {
+            queryBuilder.append("AND ").append(field).append(" = '").append(value).append("' ");
+        }
     }
 
 }

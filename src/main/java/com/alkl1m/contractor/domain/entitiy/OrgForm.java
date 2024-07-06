@@ -28,9 +28,11 @@ public class OrgForm {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "org_form_id_seq")
     @Column(name = "id", updatable = false)
     private Long id;
-    @Column(name = "name")
+
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "is_active")
+
+    @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
 }

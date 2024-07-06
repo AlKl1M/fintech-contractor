@@ -21,10 +21,13 @@ import lombok.NoArgsConstructor;
 public class Country {
 
     @Id
+    @Column(nullable = false)
     private String id;
-    @Column(name = "name")
+
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "is_active")
+
+    @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
 }
