@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,34 +47,39 @@ public class ContractorJdbcRepository {
      */
     public Page<Contractor> getContractorByParameters(ContractorFiltersPayload payload, Pageable pageable) {
         StringBuilder queryBuilder = new StringBuilder(FIND_BY_IS_ACTIVE);
+        List<Object> params = new ArrayList<>();
 
-        addEqualFilterCondition(queryBuilder, "c.id", payload.id());
-        addEqualFilterCondition(queryBuilder, "c.parent_id", payload.parentId());
-        addLikeFilterCondition(queryBuilder, "c.name", payload.name());
-        addLikeFilterCondition(queryBuilder, "c.name_full", payload.nameFull());
-        addLikeFilterCondition(queryBuilder, "c.inn", payload.inn());
-        addLikeFilterCondition(queryBuilder, "c.ogrn", payload.ogrn());
-        addLikeFilterCondition(queryBuilder, "co.name", payload.countryName());
-        addEqualFilterCondition(queryBuilder, "i.id", payload.industry() != null ? payload.industry().id() : null);
-        addEqualFilterCondition(queryBuilder, "i.name", payload.industry() != null ? payload.industry().name() : null);
-        addLikeFilterCondition(queryBuilder, "o.name", payload.orgFormName());
+        addEqualFilterCondition(queryBuilder, "c.id", payload.id(), params);
+        addEqualFilterCondition(queryBuilder, "c.parent_id", payload.parentId(), params);
+        addLikeFilterCondition(queryBuilder, "c.name", payload.name(), params);
+        addLikeFilterCondition(queryBuilder, "c.name_full", payload.nameFull(), params);
+        addLikeFilterCondition(queryBuilder, "c.inn", payload.inn(), params);
+        addLikeFilterCondition(queryBuilder, "c.ogrn", payload.ogrn(), params);
+        addLikeFilterCondition(queryBuilder, "co.name", payload.countryName(), params);
+        addEqualFilterCondition(queryBuilder, "i.id", payload.industry() != null ? payload.industry().id() : null, params);
+        addEqualFilterCondition(queryBuilder, "i.name", payload.industry() != null ? payload.industry().name() : null, params);
+        addLikeFilterCondition(queryBuilder, "o.name", payload.orgFormName(), params);
 
-        queryBuilder.append("LIMIT ").append(pageable.getPageSize()).append(" OFFSET ").append(pageable.getPageNumber() * pageable.getPageSize());
+        queryBuilder.append("LIMIT ? OFFSET ?");
 
-        List<Contractor> contractors = jdbcTemplate.query(queryBuilder.toString(), new ContractorRowMapper());
+        params.add(pageable.getPageSize());
+        params.add(pageable.getPageNumber() * pageable.getPageSize());
+        List<Contractor> contractors = jdbcTemplate.query(queryBuilder.toString(), new ContractorRowMapper(), params.toArray());
 
         return new PageImpl<>(contractors, pageable, contractors.size());
     }
 
-    private void addLikeFilterCondition(StringBuilder queryBuilder, String field, String value) {
+    private void addLikeFilterCondition(StringBuilder queryBuilder, String field, String value, List<Object> params) {
         if (value != null) {
-            queryBuilder.append("AND ").append(field).append(" LIKE '%").append(value).append("%' ");
+            queryBuilder.append("AND ").append(field).append(" LIKE ? ");
+            params.add("%" + value + "%");
         }
     }
 
-    private void addEqualFilterCondition(StringBuilder queryBuilder, String field, Object value) {
+    private void addEqualFilterCondition(StringBuilder queryBuilder, String field, Object value, List<Object> params) {
         if (value != null) {
-            queryBuilder.append("AND ").append(field).append(" = '").append(value).append("' ");
+            queryBuilder.append("AND ").append(field).append(" = ? ");
+            params.add(value);
         }
     }
 

@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class ContractorRowMapper implements RowMapper<Contractor> {
 
     /**
-     * @param rs     ResultSet, который содержит информацию для маппера.
+     * @param resultSet     ResultSet, который содержит информацию для маппера.
      * @param rowNum чисто текущей строки.
      * @return DTO контрагента.
      * @throws SQLException возможное исключения во время выполнения SQL.
