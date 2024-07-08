@@ -1,6 +1,7 @@
 package com.alkl1m.contractor.web.controller;
 
 import com.alkl1m.contractor.TestBeans;
+import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -331,6 +333,81 @@ class ContractorControllerTest {
                                 """))
                 .andExpectAll(
                         status().isOk()
+                );
+    }
+
+    @Test
+    void testSaveOrUpdateContractor_withNonExistingCountry_returnsErrorMessage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/contractor/save")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "1",
+                                  "parentId": null,
+                                  "name": "Example Contractor",
+                                  "nameFull": "Example Contractor Inc.",
+                                  "inn": "1234567890",
+                                  "ogrn": "9876543210",
+                                  "country_id": "AAA",
+                                  "industry_id": 1,
+                                  "orgForm_id": 2
+                                }
+                                """))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().json("""
+                        {"message":"Country not found","errors":null}
+                        """)
+                );
+    }
+
+    @Test
+    void testSaveOrUpdateContractor_withNonExistingIndustry_returnsErrorMessage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/contractor/save")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "1",
+                                  "parentId": null,
+                                  "name": "Example Contractor",
+                                  "nameFull": "Example Contractor Inc.",
+                                  "inn": "1234567890",
+                                  "ogrn": "9876543210",
+                                  "country_id": "ABH",
+                                  "industry_id": 1000000,
+                                  "orgForm_id": 2
+                                }
+                                """))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().json("""
+                        {"message":"Industry not found","errors":null}
+                        """)
+                );
+    }
+
+    @Test
+    void testSaveOrUpdateContractor_withNonExistingOrgForm_returnsErrorMessage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/contractor/save")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "1",
+                                  "parentId": null,
+                                  "name": "Example Contractor",
+                                  "nameFull": "Example Contractor Inc.",
+                                  "inn": "1234567890",
+                                  "ogrn": "9876543210",
+                                  "country_id": "ABH",
+                                  "industry_id": 1,
+                                  "orgForm_id": 100000
+                                }
+                                """))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().json("""
+                        {"message":"OrgForm not found","errors":null}
+                        """)
                 );
     }
 
