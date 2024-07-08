@@ -96,13 +96,10 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     @Transactional
     public ContractorDto saveOrUpdate(NewContractorPayload payload) {
-        Country country = countryRepository.findById(payload.country_id()).orElseThrow(() -> new CountryNotFoundException("Country not found"));
-        Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
-        OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
 
         return ContractorDto.from(contractorRepository.findById(payload.id())
-                .map(existingContractor -> updateExistingContractor(payload, existingContractor, country, industry, orgForm))
-                .orElseGet(() -> createNewContractor(payload, country, industry, orgForm)));
+                .map(existingContractor -> updateExistingContractor(payload, existingContractor))
+                .orElseGet(() -> createNewContractor(payload)));
     }
 
     /**
@@ -140,12 +137,13 @@ public class ContractorServiceImpl implements ContractorService {
      * Метод для создания нового контрагента если не передан id.
      *
      * @param payload  dto контрагента.
-     * @param country  объект страны.
-     * @param industry объект индустриального кода.
-     * @param orgForm  объект организационной формы.
      * @return созданный контрагент.
      */
-    private Contractor createNewContractor(NewContractorPayload payload, Country country, Industry industry, OrgForm orgForm) {
+    private Contractor createNewContractor(NewContractorPayload payload) {
+        Country country = countryRepository.findById(payload.country_id()).orElseThrow(() -> new CountryNotFoundException("Country not found"));
+        Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
+        OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
+
         return contractorRepository.save(
                 NewContractorPayload.toContractor(payload, country, industry, orgForm, "1")
         );
@@ -154,12 +152,13 @@ public class ContractorServiceImpl implements ContractorService {
     /**
      * @param payload            информация для обновления контрагента.
      * @param existingContractor объект изменяемого контрагента.
-     * @param country            объект страны.
-     * @param industry           объект индустриального кода.
-     * @param orgForm            объект организационной формы.
      * @return объект обновленного контрагента.
      */
-    private Contractor updateExistingContractor(NewContractorPayload payload, Contractor existingContractor, Country country, Industry industry, OrgForm orgForm) {
+    private Contractor updateExistingContractor(NewContractorPayload payload, Contractor existingContractor) {
+        Country country = countryRepository.findById(payload.country_id()).orElseThrow(() -> new CountryNotFoundException("Country not found"));
+        Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
+        OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
+
         existingContractor.setParentId(payload.parentId());
         existingContractor.setName(payload.name());
         existingContractor.setNameFull(payload.nameFull());
