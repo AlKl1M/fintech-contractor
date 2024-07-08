@@ -46,6 +46,7 @@ public class ContractorServiceImpl implements ContractorService {
     private final CountryRepository countryRepository;
     private final IndustryRepository industryRepository;
     private final OrgFormRepository orgFormRepository;
+    private static final String DEFAULT_USER_ID = "1";
 
     /**
      * Поиск контрагента по заданным параметрам.
@@ -145,7 +146,7 @@ public class ContractorServiceImpl implements ContractorService {
         OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
 
         return contractorRepository.save(
-                NewContractorPayload.toContractor(payload, country, industry, orgForm, "1")
+                NewContractorPayload.toContractor(payload, country, industry, orgForm, DEFAULT_USER_ID)
         );
     }
 
@@ -168,7 +169,7 @@ public class ContractorServiceImpl implements ContractorService {
         existingContractor.setIndustry(industry);
         existingContractor.setOrgForm(orgForm);
         existingContractor.setModifyDate(new Date());
-        existingContractor.setModifyUserId("1");
+        existingContractor.setModifyUserId(DEFAULT_USER_ID);
         existingContractor.setActive(true);
         return contractorRepository.save(existingContractor);
     }
