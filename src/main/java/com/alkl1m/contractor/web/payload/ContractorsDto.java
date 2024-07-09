@@ -1,5 +1,6 @@
 package com.alkl1m.contractor.web.payload;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.Page;
 
 /**
@@ -8,7 +9,10 @@ import org.springframework.data.domain.Page;
  * @param contractors список пагинированных DTO контрагентов
  */
 public record ContractorsDto(
+
+        @Schema(description = "DTO содержащая пагинированный список контрагентов")
         Page<ContractorDto> contractors
+
 ) {
     /**
      * @param contractors список пагинированных DTO контрагентов.

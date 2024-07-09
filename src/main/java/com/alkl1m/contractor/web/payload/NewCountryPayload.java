@@ -1,6 +1,7 @@
 package com.alkl1m.contractor.web.payload;
 
 import com.alkl1m.contractor.domain.entitiy.Country;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -12,9 +13,13 @@ import jakarta.validation.constraints.Size;
  * @author alkl1m
  */
 public record NewCountryPayload(
+
+        @Schema(description = "Уникальный идентификатор")
         @NotNull(message = "{contractor.country.errors.id_is_null}")
         @Size(min = 1, max = 3, message = "{contractor.country.errors.id_size_is_invalid}")
         String id,
+
+        @Schema(description = "Название страны")
         @NotNull(message = "{contractor.country.errors.name_is_null}")
         String name
 ) {

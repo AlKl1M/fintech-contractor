@@ -1,6 +1,7 @@
 package com.alkl1m.contractor.web.payload;
 
 import com.alkl1m.contractor.domain.entitiy.Country;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * DTO для получения стран без вспомогательных полей.
@@ -9,7 +10,11 @@ import com.alkl1m.contractor.domain.entitiy.Country;
  * @param name страны.
  */
 public record CountryDto(
+
+        @Schema(description = "Уникальный идентификатор страны")
         String id,
+
+        @Schema(description = "Название страны")
         String name
 ) {
 

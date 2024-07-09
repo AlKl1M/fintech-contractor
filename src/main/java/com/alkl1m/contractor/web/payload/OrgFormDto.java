@@ -1,6 +1,7 @@
 package com.alkl1m.contractor.web.payload;
 
 import com.alkl1m.contractor.domain.entitiy.OrgForm;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * DTO для получения организационных форм без вспомогательных полей.
@@ -9,7 +10,11 @@ import com.alkl1m.contractor.domain.entitiy.OrgForm;
  * @param name организационной формы.
  */
 public record OrgFormDto(
+
+        @Schema(description = "Уникальный идентификатор")
         Long id,
+
+        @Schema(description = "Название организационной формы")
         String name
 ) {
 

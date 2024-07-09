@@ -1,5 +1,7 @@
 package com.alkl1m.contractor.web.payload;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * DTO для передачи RequestBody списка фильтрации контрагентов.
  *
@@ -13,13 +15,31 @@ package com.alkl1m.contractor.web.payload;
  * @param industry    контрагента.
  * @param orgFormName контрагента.
  */
-public record ContractorFiltersPayload(String id,
-                                       String parentId,
-                                       String name,
-                                       String nameFull,
-                                       String inn,
-                                       String ogrn,
-                                       String countryName,
-                                       IndustryDto industry,
-                                       String orgFormName) {
+public record ContractorFiltersPayload(
+        @Schema(description = "Уникальный идентификатор")
+        String id,
+
+        @Schema(description = "Уникальный идентификатор родителя контрагента")
+        String parentId,
+
+        @Schema(description = "Имя контрагента")
+        String name,
+
+        @Schema(description = "Полное имя контрагента")
+        String nameFull,
+
+        @Schema(description = "Идентификационный номер налогоплательщика")
+        String inn,
+
+        @Schema(description = "Основной государственный регистрационный номер")
+        String ogrn,
+
+        @Schema(description = "Название страны")
+        String countryName,
+
+        @Schema(description = "DTO индустриального номера")
+        IndustryDto industry,
+
+        @Schema(description = "Название организационной формы")
+        String orgFormName) {
 }

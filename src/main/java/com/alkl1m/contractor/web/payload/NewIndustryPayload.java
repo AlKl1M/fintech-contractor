@@ -1,6 +1,7 @@
 package com.alkl1m.contractor.web.payload;
 
 import com.alkl1m.contractor.domain.entitiy.Industry;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -11,7 +12,11 @@ import jakarta.validation.constraints.NotNull;
  * @author alkl1m
  */
 public record NewIndustryPayload(
+
+        @Schema(description = "Уникальный идентификатор")
         Long id,
+
+        @Schema(description = "Имя индустриального кода")
         @NotNull(message = "{contractor.industry.errors.name_is_null}")
         String name
 ) {

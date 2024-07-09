@@ -1,6 +1,7 @@
 package com.alkl1m.contractor.web.payload;
 
 import com.alkl1m.contractor.domain.entitiy.Contractor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * DTO для контрагентов без вспомогательных полей.
@@ -17,14 +18,32 @@ import com.alkl1m.contractor.domain.entitiy.Contractor;
  * @author alkl1m
  */
 public record ContractorDto(
+
+        @Schema(description = "Уникальный идентификатор")
         String id,
+
+        @Schema(description = "Уникальный идентификатор родителя контрагента")
         String parentId,
+
+        @Schema(description = "Имя контрагента")
         String name,
+
+        @Schema(description = "Полное имя контрагента")
         String nameFull,
+
+        @Schema(description = "Идентификационный номер налогоплательщика")
         String inn,
+
+        @Schema(description = "Основной государственный регистрационный номер")
         String ogrn,
+
+        @Schema(description = "DTO страны")
         CountryDto country,
+
+        @Schema(description = "DTO индустриального номера")
         IndustryDto industry,
+
+        @Schema(description = "DTO организационной формы")
         OrgFormDto orgForm
 ) {
 
