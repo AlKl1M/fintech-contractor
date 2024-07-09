@@ -1,24 +1,33 @@
+--liquibase formatted sql
+
+--changeset alkl1m:1
 create table if not exists country
 (
     id        text primary key not null,
     name      text             not null,
     is_active boolean          not null default true
 );
+--rollback drop table country
 
+--changeset alkl1m:2
 create table if not exists industry
 (
     id        serial primary key not null,
     name      text               not null,
     is_active boolean            not null default true
 );
+--rollback drop table industry
 
+--changeset alkl1m:3
 create table if not exists org_form
 (
     id        serial primary key not null,
     name      text               not null,
     is_active boolean            not null default true
 );
+--rollback drop table org_form
 
+--changeset alkl1m:4
 create table if not exists contractor
 (
     id             varchar(12) primary key,
@@ -40,3 +49,4 @@ create table if not exists contractor
     foreign key (industry) references industry (id),
     foreign key (org_form) references org_form (id)
 );
+--rollback drop table contractor

@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset alkl1m:5
 INSERT INTO country (id, "name")
 VALUES ('ABH', 'Абхазия'),
        ('ABW', 'Аруба'),
@@ -253,6 +256,8 @@ VALUES ('ABH', 'Абхазия'),
        ('ZAF', 'Южная Африка'),
        ('ZMB', 'Замбия'),
        ('ZWE', 'Зимбабве');
+
+--changeset alkl1m:6
 INSERT INTO industry (id, "name")
 VALUES (1, 'Авиастроение'),
        (2, 'Автомобилестроение'),
@@ -361,6 +366,7 @@ VALUES (1, 'Авиастроение'),
        (104, 'Энергомашиностроение'),
        (105, 'Ювелирная промышленность');
 
+--changeset alkl1m:7
 INSERT INTO org_form (id, "name")
 VALUES (1, '-'),
        (2, 'Автономная некоммерческая организация'),
