@@ -49,6 +49,18 @@ class IndustryControllerTest {
     }
 
     @Test
+    void testGetIndustryById_withInvalidId_returnsError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/industry/{id}", "100000"))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().json("""
+                        {"message":"Industry with id 100000 not found!","errors":null}
+                        """
+                        )
+                );
+    }
+
+    @Test
     void testGetIndustryById_withInvalidPayload_returnsErrorMessage() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/industry/{id}", 100000))
                 .andExpectAll(

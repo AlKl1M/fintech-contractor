@@ -49,6 +49,18 @@ class CountryControllerTest {
     }
 
     @Test
+    void testGetCountryById_withInvalidId_returnsError() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/country/{id}", "AAA"))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().json("""
+                        {"message":"Country with id AAA not found!","errors":null}
+                        """
+                        )
+                );
+    }
+
+    @Test
     void testSaveCountry_withValidPayload_returnsValidData() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
