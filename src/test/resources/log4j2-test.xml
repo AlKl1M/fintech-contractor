@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Properties>
+        <Property name="auditLogConsole">INFO</Property>
+        <Property name="auditLogFile">OFF</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <File name="MyFile" fileName="logs/app.log">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+        </Root>
+
+        <Logger name="com.alkl1m.auditlogspringbootautoconfigure.aspect" additivity="false">
+            <AppenderRef ref="Console" level="${auditLogConsole}"/>
+            <AppenderRef ref="MyFile" level="${auditLogFile}"/>
+        </Logger>
+
+        <Logger name="com.alkl1m.auditlogspringbootautoconfigure.advice" additivity="false">
+            <AppenderRef ref="Console" level="${auditLogConsole}"/>
+            <AppenderRef ref="MyFile" level="${auditLogFile}"/>
+        </Logger>
+    </Loggers>
+</Configuration>

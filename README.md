@@ -1,5 +1,9 @@
 # Spring boot REST API для работы с контрагентами финтех приложения.
 
 ```bash
-docker run --name contractor-db -p 5432:5432 -e POSTGRES_USER=contractor -e POSTGRES_PASSWORD=contractor -e POSTGRES_DB=contractor postgres:16
+docker compose up
+```
+
+```bash
+mvn install:install-file -Dfile=lib/auditlog-spring-boot-autoconfigure-0.0.1-SNAPSHOT.jar -DgroupId=com.alkl1m -DartifactId=auditlog-spring-boot-starter -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar
 ```
