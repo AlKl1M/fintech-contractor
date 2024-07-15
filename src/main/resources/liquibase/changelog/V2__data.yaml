@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: alkl1m
+      changes:
+        - sqlFile:
+            path: liquibase/changeset/country_202406271252.sql
+        - sqlFile:
+            path: liquibase/changeset/industry_202406271306.sql
+        - sqlFile:
+            path: liquibase/changeset/org_form_202406271307.sql

@@ -1,0 +1,151 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: alkl1m
+      changes:
+        - createTable:
+            tableName: country
+            ifNotExists: true
+            columns:
+              - column:
+                  name : id
+                  type: text
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2
+      author: alkl1m
+      changes:
+        - createTable:
+            tableName: industry
+            ifNotExists: true
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 3
+      author: alkl1m
+      changes:
+        - createTable:
+            tableName: org_form
+            ifNotExists: true
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 4
+      author: alkl1m
+      changes:
+        - createTable:
+            tableName: contractor
+            ifNotExists: true
+            columns:
+              - column:
+                  name: id
+                  type: varchar(12)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: varchar(12)
+                  constraints:
+                    foreignKeyName: parent_id
+                    referencedTableName: contractor
+                    referencedColumnNames: id
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name_full
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: inn
+                  type: text
+              - column:
+                  name: ogrn
+                  type: text
+              - column:
+                  name: country
+                  type: text
+                  constraints:
+                    foreignKeyName: country
+                    referencedTableName: country
+                    referencedColumnNames: id
+              - column:
+                  name: industry
+                  type: int4
+                  constraints:
+                    foreignKeyName: industry
+                    referencedTableName: industry
+                    referencedColumnNames: id
+              - column:
+                  name: org_form
+                  type: int4
+                  constraints:
+                    foreignKeyName: org_form
+                    referencedTableName: org_form
+                    referencedColumnNames: id
+              - column:
+                  name: modify_date
+                  type: timestamp
+              - column:
+                  name: create_user_id
+                  type: text
+              - column:
+                  name: modify_user_id
+                  type: text
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
