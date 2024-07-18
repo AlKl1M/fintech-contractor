@@ -5,6 +5,7 @@ import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.ContractorsDto;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author alkl1m
@@ -20,5 +21,7 @@ public interface ContractorService {
     ContractorDto findById(String id);
 
     void deleteContractorById(String id);
+
+    void changeMainBorrower(String contractorId, Boolean main);
 
 }

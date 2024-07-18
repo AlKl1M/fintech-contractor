@@ -1,5 +1,9 @@
 application-version: 0.0.1-SNAPSHOT
 application-description: Contractor rest api
+
+server:
+  port: 8081
+
 spring:
   jpa:
     hibernate:

@@ -74,6 +74,9 @@ public class Contractor {
     @Column(name = "modify_user_id")
     private String modifyUserId;
 
+    @Column(name = "active_main_borrower")
+    private boolean activeMainBorrower;
+
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 

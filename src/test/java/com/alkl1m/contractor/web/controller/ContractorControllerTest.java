@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -480,6 +481,46 @@ class ContractorControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/contractor/delete/{id}", 1))
                 .andExpectAll(
                         status().isOk()
+                );
+    }
+
+    @Test
+    @Sql("/sql/contractors.sql")
+    void testChangeMainBorrower_withValidId_returnsValidStatus() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/contractor/main-borrower")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                                {
+                                  "contractorId": "1",
+                                  "main": true
+                                }
+                                """))
+                .andExpectAll(
+                        status().isOk()
+                );
+    }
+
+    @Test
+    @Sql("/sql/contractors.sql")
+    void testChangeMainBorrower_withNullData_returnsBadRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/contractor/main-borrower")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "contractorId": null,
+                                  "main": null
+                                }
+                                """))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().json("""
+                                {
+                                  "message": "Validation failed.",
+                                  "errors": {
+                                    "contractorId":"Contractor ID cannot be null"
+                                  }
+                                }
+                                """)
                 );
     }
 
