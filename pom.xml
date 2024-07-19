@@ -22,7 +22,6 @@
         <java.compiler.target>14</java.compiler.target>
         <spring.boot.version>3.3.1</spring.boot.version>
         <liquibase.version>4.28.0</liquibase.version>
-        <preliquibase.version>1.5.1</preliquibase.version>
         <auditlog.version>0.0.1-SNAPSHOT</auditlog.version>
         <postgresql.version>42.7.3</postgresql.version>
         <lombok.version>1.18.32</lombok.version>
@@ -66,11 +65,6 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.lbruun.springboot</groupId>
-            <artifactId>preliquibase-spring-boot-starter</artifactId>
-            <version>${preliquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alkl1m</groupId>

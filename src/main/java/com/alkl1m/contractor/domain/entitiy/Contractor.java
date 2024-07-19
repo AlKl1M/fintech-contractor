@@ -24,7 +24,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "contractor", name = "contractor")
+@Table(name = "contractor")
 public class Contractor {
 
     @Id

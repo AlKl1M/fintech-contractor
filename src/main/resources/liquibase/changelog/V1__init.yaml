@@ -135,6 +135,9 @@ databaseChangeLog:
                     referencedTableName: org_form
                     referencedColumnNames: id
               - column:
+                  name: create_date
+                  type: timestamp
+              - column:
                   name: modify_date
                   type: timestamp
               - column:

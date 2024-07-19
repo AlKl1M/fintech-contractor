@@ -9,7 +9,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/contractor?currentSchema=contractor
+    url: jdbc:postgresql://localhost:5432/contractor
     username: contractor
     password: contractor
     driver-class-name: org.postgresql.Driver
@@ -20,4 +20,3 @@ spring:
   liquibase:
     change-log: classpath:liquibase/db.changelog.yaml
     enabled: true
-    default-schema: contractor
