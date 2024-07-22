@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
  *
  * @author alkl1m
  */
-
 @Tag(name = "contractor", description = "The Contractor API")
 @RestController
 @RequiredArgsConstructor
