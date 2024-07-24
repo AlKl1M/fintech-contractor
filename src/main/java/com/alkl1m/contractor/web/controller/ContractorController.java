@@ -5,6 +5,7 @@ import com.alkl1m.contractor.service.ContractorService;
 import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.ContractorsDto;
+import com.alkl1m.contractor.web.payload.MainBorrowerRequest;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -18,22 +19,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * RestController для работы с контрагентами.
  *
  * @author alkl1m
  */
-
 @Tag(name = "contractor", description = "The Contractor API")
 @RestController
 @RequiredArgsConstructor
@@ -71,6 +63,30 @@ public class ContractorController {
         Pageable paging = PageRequest.of(page, size);
         ContractorsDto contractorPage = contractorService.getContractorsByParameters(payload, paging);
         return ResponseEntity.ok().body(contractorPage);
+    }
+
+    /**
+     * Изменение статуса основного заемщика у контрагента.
+     *
+     * @param request содержит contractorId, у которого меняем статус основного заемщика на request.main().
+     * @return Response.ok(), если изменение пройдет успешно.
+     */
+    @Operation(summary = "Изменение статуса основного заемщика", tags = "contractor")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Изменил статус основного заемщика у контрагента",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = ContractorDto.class)))
+                    })
+    })
+    @AuditLog
+    @PatchMapping("/main-borrower")
+    public ResponseEntity<Void> mainBorrower(@Validated @RequestBody MainBorrowerRequest request) {
+        contractorService.changeMainBorrower(request.contractorId(), request.main());
+        return ResponseEntity.ok().build();
     }
 
     /**

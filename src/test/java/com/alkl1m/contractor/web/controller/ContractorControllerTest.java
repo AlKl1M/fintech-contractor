@@ -483,4 +483,44 @@ class ContractorControllerTest {
                 );
     }
 
+    @Test
+    @Sql("/sql/contractors.sql")
+    void testChangeMainBorrower_withValidId_returnsValidStatus() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/contractor/main-borrower")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                                {
+                                  "contractorId": "1",
+                                  "main": true
+                                }
+                                """))
+                .andExpectAll(
+                        status().isOk()
+                );
+    }
+
+    @Test
+    @Sql("/sql/contractors.sql")
+    void testChangeMainBorrower_withNullData_returnsBadRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/contractor/main-borrower")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "contractorId": null,
+                                  "main": null
+                                }
+                                """))
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().json("""
+                                {
+                                  "message": "Validation failed.",
+                                  "errors": {
+                                    "contractorId":"Contractor ID cannot be null"
+                                  }
+                                }
+                                """)
+                );
+    }
+
 }

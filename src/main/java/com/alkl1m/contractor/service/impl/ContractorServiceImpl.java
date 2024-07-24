@@ -135,6 +135,24 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     /**
+     * Изменение статуса основного заемщика у контрагента.
+     *
+     * @param contractorId уникальный идентификатор контрагента.
+     * @param main статус основного заемщика контрагента.
+     */
+    @Override
+    @Transactional
+    public void changeMainBorrower(String contractorId, Boolean main) {
+        Optional<Contractor> optionalContractor = contractorRepository.findById(contractorId);
+        optionalContractor.ifPresentOrElse(contractor -> {
+            contractor.setActiveMainBorrower(main);
+            contractorRepository.save(contractor);
+        }, () -> {
+            throw new ContractorNotFoundException(String.format("Contractor with id %s not found", contractorId));
+        });
+    }
+
+    /**
      * Метод для создания нового контрагента если не передан id.
      *
      * @param payload  dto контрагента.

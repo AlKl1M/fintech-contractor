@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "contractor", name = "country")
+@Table(name = "country")
 public class Country {
 
     @Id

@@ -105,4 +105,4 @@
 	 (104,'Энергомашиностроение'),
 	 (105,'Ювелирная промышленность');
 
-ALTER SEQUENCE industry_id_Seq RESTART WITH 106;
+ALTER SEQUENCE industry_id_seq RESTART WITH 106;

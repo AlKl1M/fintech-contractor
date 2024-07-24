@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "contractor", name = "org_form")
+@Table(name = "org_form")
 public class OrgForm {
 
     @Id

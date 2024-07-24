@@ -1,11 +1,15 @@
 application-version: 0.0.1-SNAPSHOT
 application-description: Contractor rest api
+
+server:
+  port: 8081
+
 spring:
   jpa:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/contractor?currentSchema=contractor
+    url: jdbc:postgresql://localhost:5432/contractor
     username: contractor
     password: contractor
     driver-class-name: org.postgresql.Driver
@@ -16,4 +20,3 @@ spring:
   liquibase:
     change-log: classpath:liquibase/db.changelog.yaml
     enabled: true
-    default-schema: contractor

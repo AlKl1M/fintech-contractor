@@ -21,4 +21,6 @@ public interface ContractorService {
 
     void deleteContractorById(String id);
 
+    void changeMainBorrower(String contractorId, Boolean main);
+
 }

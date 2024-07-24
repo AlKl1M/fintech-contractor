@@ -24,7 +24,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "contractor", name = "contractor")
+@Table(name = "contractor")
 public class Contractor {
 
     @Id
@@ -73,6 +73,9 @@ public class Contractor {
     @LastModifiedBy
     @Column(name = "modify_user_id")
     private String modifyUserId;
+
+    @Column(name = "active_main_borrower")
+    private boolean activeMainBorrower;
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;

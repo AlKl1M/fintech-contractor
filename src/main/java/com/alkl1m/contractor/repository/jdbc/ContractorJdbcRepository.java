@@ -27,10 +27,10 @@ public class ContractorJdbcRepository {
                    i.id AS industry_id, i.name AS industry_name, i.is_active AS industry_is_active,
                    o.id AS org_form_id, o.name AS org_form_name, o.is_active AS org_form_is_active,
                    c.create_date, c.modify_date, c.create_user_id, c.modify_user_id
-            FROM contractor.contractor c
-                     LEFT JOIN contractor.country co ON c.country = co.id
-                     LEFT JOIN contractor.industry i ON c.industry = i.id
-                     LEFT JOIN contractor.org_form o ON c.org_form = o.id
+            FROM contractor c
+                     LEFT JOIN country co ON c.country = co.id
+                     LEFT JOIN industry i ON c.industry = i.id
+                     LEFT JOIN org_form o ON c.org_form = o.id
             WHERE c.is_active = true
             """;
 
