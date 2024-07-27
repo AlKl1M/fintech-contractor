@@ -1,6 +1,8 @@
 package com.alkl1m.contractor.web.controller;
 
+import com.alkl1m.contractor.JwtUtil;
 import com.alkl1m.contractor.TestBeans;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,6 +12,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,8 +30,11 @@ class ContractorControllerTest {
     @Test
     @Sql("/sql/contractors.sql")
     void testGetContractorsByParameters_withOneParameter_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.post("/contractor/search")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {"id": "1"}
                                 """))
@@ -90,9 +98,44 @@ class ContractorControllerTest {
 
     @Test
     @Sql("/sql/contractors.sql")
-    void testGetContractorsByParameters_withAllParameters_returnsValidData() throws Exception {
+    void testGetContractorsByParameters_withCountryRusUserAndRusParameter_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("CONTRACTOR_RUS");
+        String jwt = JwtUtil.generateJwt("contractorrus", roles);
         mockMvc.perform(MockMvcRequestBuilders.post("/contractor/search")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
+                        .content("""
+                                {"countryName": "Россия"}
+                                """))
+                .andExpectAll(
+                        status().isOk()
+                );
+    }
+
+    @Test
+    @Sql("/sql/contractors.sql")
+    void testGetContractorsByParameters_withUserAndRusParameter_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("USER");
+        String jwt = JwtUtil.generateJwt("user", roles);
+        mockMvc.perform(MockMvcRequestBuilders.post("/contractor/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
+                        .content("""
+                                {"countryName": "Россия"}
+                                """))
+                .andExpectAll(
+                        status().isForbidden()
+                );
+    }
+
+    @Test
+    @Sql("/sql/contractors.sql")
+    void testGetContractorsByParameters_withAllParameters_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.post("/contractor/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": "1",
@@ -170,8 +213,11 @@ class ContractorControllerTest {
     @Test
     @Sql("/sql/contractors.sql")
     void testGetContractorPageableByIdd_withOneParameter_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.post("/contractor/crud/search")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {"id": "1"}
                                 """))
@@ -236,8 +282,11 @@ class ContractorControllerTest {
     @Test
     @Sql("/sql/contractors.sql")
     void testGetContractorPageableById_withAllParameters_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.post("/contractor/crud/search")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": "1",
@@ -314,8 +363,11 @@ class ContractorControllerTest {
 
     @Test
     void testSaveOrUpdateContractor_withValidPayload_returnsValidStatus() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/contractor/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": "1",
@@ -336,8 +388,11 @@ class ContractorControllerTest {
 
     @Test
     void testSaveOrUpdateContractor_withNonExistingCountry_returnsErrorMessage() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/contractor/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": "1",
@@ -361,8 +416,11 @@ class ContractorControllerTest {
 
     @Test
     void testSaveOrUpdateContractor_withNonExistingIndustry_returnsErrorMessage() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/contractor/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": "1",
@@ -386,8 +444,11 @@ class ContractorControllerTest {
 
     @Test
     void testSaveOrUpdateContractor_withNonExistingOrgForm_returnsErrorMessage() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/contractor/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": "1",
@@ -411,8 +472,11 @@ class ContractorControllerTest {
 
     @Test
     void testSaveOrUpdateContractor_withInvalidPayload_returnsBadRequestMessage() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/contractor/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": null,
@@ -446,7 +510,46 @@ class ContractorControllerTest {
     @Test
     @Sql("/sql/contractors.sql")
     void testGetContractorPageableById_withValidPayload_returnsValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/contractor/{id}", 1))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/contractor/{id}", 1)
+                        .cookie(new Cookie("jwt", jwt))
+                )
+                .andExpectAll(
+                        status().isOk(),
+                        content().json("""
+                                {
+                                  "id": "1",
+                                  "parentId": null,
+                                  "name": "Contractor 1",
+                                  "nameFull": "Full Name 1",
+                                  "inn": "111111111",
+                                  "ogrn": "111111111",
+                                  "country": {
+                                    "id": "ABH",
+                                    "name": "Абхазия"
+                                  },
+                                  "industry": {
+                                    "id": 1,
+                                    "name": "Авиастроение"
+                                  },
+                                  "orgForm": {
+                                    "id": 1,
+                                    "name": "-"
+                                  }
+                                }
+                                """)
+                );
+    }
+
+    @Test
+    @Sql("/sql/contractors.sql")
+    void testGetContractorPageableById_withUserAndValidPayload_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("USER");
+        String jwt = JwtUtil.generateJwt("user", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/contractor/{id}", 1)
+                        .cookie(new Cookie("jwt", jwt))
+                )
                 .andExpectAll(
                         status().isOk(),
                         content().json("""
@@ -477,7 +580,11 @@ class ContractorControllerTest {
     @Test
     @Sql("/sql/contractors.sql")
     void testDeleteContractorById_withValidId_returnsValidStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/contractor/delete/{id}", 1))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/contractor/delete/{id}", 1)
+                        .cookie(new Cookie("jwt", jwt))
+                )
                 .andExpectAll(
                         status().isOk()
                 );
@@ -486,8 +593,11 @@ class ContractorControllerTest {
     @Test
     @Sql("/sql/contractors.sql")
     void testChangeMainBorrower_withValidId_returnsValidStatus() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.patch("/contractor/main-borrower")
-                .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                 .content("""
                                 {
                                   "contractorId": "1",
@@ -502,7 +612,10 @@ class ContractorControllerTest {
     @Test
     @Sql("/sql/contractors.sql")
     void testChangeMainBorrower_withNullData_returnsBadRequest() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.patch("/contractor/main-borrower")
+                        .cookie(new Cookie("jwt", jwt))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
