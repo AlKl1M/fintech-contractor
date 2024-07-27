@@ -18,8 +18,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 /**
  * RestController для работы с контрагентами.
@@ -58,11 +61,12 @@ public class ContractorController {
     public ResponseEntity<ContractorsDto> getContractorsByParameters(
             @RequestBody ContractorFiltersPayload payload,
             @RequestParam(defaultValue = "0", required = false) Integer page,
-            @RequestParam(defaultValue = "10", required = false) Integer size
+            @RequestParam(defaultValue = "10", required = false) Integer size,
+            Principal principal
     ) {
+        Authentication authentication = (Authentication) principal;
         Pageable paging = PageRequest.of(page, size);
-        ContractorsDto contractorPage = contractorService.getContractorsByParameters(payload, paging);
-        return ResponseEntity.ok().body(contractorPage);
+        return ResponseEntity.ok().body(contractorService.getContractorsByParameters(payload, paging, authentication));
     }
 
     /**
@@ -113,10 +117,12 @@ public class ContractorController {
     public ResponseEntity<ContractorsDto> getContractorPageableByIdd(
             @RequestBody ContractorFiltersPayload payload,
             @RequestParam(defaultValue = "0", required = false) Integer page,
-            @RequestParam(defaultValue = "10", required = false) Integer size
+            @RequestParam(defaultValue = "10", required = false) Integer size,
+            Principal principal
     ) {
+        Authentication authentication = (Authentication) principal;
         Pageable paging = PageRequest.of(page, size);
-        ContractorsDto contractorsPage = contractorService.getContractorsWithCrudByParameters(payload, paging);
+        ContractorsDto contractorsPage = contractorService.getContractorsWithCrudByParameters(payload, paging, authentication);
         return ResponseEntity.ok().body(contractorsPage);
     }
 

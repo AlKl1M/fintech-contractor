@@ -24,12 +24,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для работы с контрагентами.
@@ -55,8 +60,12 @@ public class ContractorServiceImpl implements ContractorService {
      * @param pageable объект пагинации.
      * @return DTO содержащее список пагинированных контрагентов.
      */
-    public ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable) {
+    public ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable, Authentication authentication) {
         Specification<Contractor> spec = ContractorSpecifications.getContractorByParameters(payload);
+
+        Set<String> userRoles = getUserRoles(authentication);
+
+        validateUserRoles(payload, userRoles);
 
         Page<Contractor> contractorsPage = contractorRepository.findAll(spec, pageable);
 
@@ -76,7 +85,12 @@ public class ContractorServiceImpl implements ContractorService {
      * @return DTO содержащее список пагинированных контрагентов.
      */
     @Override
-    public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable) {
+    public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable, Authentication authentication) {
+
+        Set<String> userRoles = getUserRoles(authentication);
+
+        validateUserRoles(payload, userRoles);
+
         Page<Contractor> contractorsPage = contractorJdbcRepository.getContractorByParameters(payload, pageable);
 
         List<ContractorDto> contractorDtos = contractorsPage.getContent()
@@ -190,6 +204,22 @@ public class ContractorServiceImpl implements ContractorService {
         existingContractor.setModifyUserId(DEFAULT_USER_ID);
         existingContractor.setActive(true);
         return contractorRepository.save(existingContractor);
+    }
+
+    private Set<String> getUserRoles(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+    }
+
+    private void validateUserRoles(ContractorFiltersPayload payload, Set<String> userRoles) {
+        boolean isContractorUser = userRoles.contains("CONTRACTOR_RUS");
+
+        if (isContractorUser) {
+            if (!payload.countryName().equals("Россия")) {
+                throw new AuthenticationServiceException("Wrong");
+            }
+        }
     }
 
 }
