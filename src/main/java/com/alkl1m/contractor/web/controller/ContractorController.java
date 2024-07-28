@@ -2,6 +2,7 @@ package com.alkl1m.contractor.web.controller;
 
 import com.alkl1m.auditlogspringbootautoconfigure.annotation.AuditLog;
 import com.alkl1m.contractor.service.ContractorService;
+import com.alkl1m.contractor.service.impl.UserDetailsImpl;
 import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.ContractorsDto;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,11 +64,10 @@ public class ContractorController {
             @RequestBody ContractorFiltersPayload payload,
             @RequestParam(defaultValue = "0", required = false) Integer page,
             @RequestParam(defaultValue = "10", required = false) Integer size,
-            Principal principal
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        Authentication authentication = (Authentication) principal;
         Pageable paging = PageRequest.of(page, size);
-        return ResponseEntity.ok().body(contractorService.getContractorsByParameters(payload, paging, authentication));
+        return ResponseEntity.ok().body(contractorService.getContractorsByParameters(payload, paging, userDetails));
     }
 
     /**
@@ -118,11 +119,10 @@ public class ContractorController {
             @RequestBody ContractorFiltersPayload payload,
             @RequestParam(defaultValue = "0", required = false) Integer page,
             @RequestParam(defaultValue = "10", required = false) Integer size,
-            Principal principal
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        Authentication authentication = (Authentication) principal;
         Pageable paging = PageRequest.of(page, size);
-        ContractorsDto contractorsPage = contractorService.getContractorsWithCrudByParameters(payload, paging, authentication);
+        ContractorsDto contractorsPage = contractorService.getContractorsWithCrudByParameters(payload, paging, userDetails);
         return ResponseEntity.ok().body(contractorsPage);
     }
 
@@ -169,8 +169,10 @@ public class ContractorController {
     })
     @AuditLog
     @PutMapping("/save")
-    public ResponseEntity<ContractorDto> saveOrUpdateContractor(@Validated @RequestBody NewContractorPayload payload) {
-        ContractorDto savedContractor = contractorService.saveOrUpdate(payload);
+    public ResponseEntity<ContractorDto> saveOrUpdateContractor(
+            @Validated @RequestBody NewContractorPayload payload,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ContractorDto savedContractor = contractorService.saveOrUpdate(payload, userDetails.getId());
         return ResponseEntity.ok(savedContractor);
     }
 

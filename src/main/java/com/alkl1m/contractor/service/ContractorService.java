@@ -1,5 +1,6 @@
 package com.alkl1m.contractor.service;
 
+import com.alkl1m.contractor.service.impl.UserDetailsImpl;
 import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.ContractorsDto;
@@ -12,11 +13,11 @@ import org.springframework.security.core.Authentication;
  */
 public interface ContractorService {
 
-    ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable, Authentication authentication);
+    ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable, UserDetailsImpl userDetails);
 
-    ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable, Authentication authentication);
+    ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable, UserDetailsImpl userDetails);
 
-    ContractorDto saveOrUpdate(NewContractorPayload payload);
+    ContractorDto saveOrUpdate(NewContractorPayload payload, String userId);
 
     ContractorDto findById(String id);
 

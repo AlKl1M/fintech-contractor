@@ -51,7 +51,6 @@ public class ContractorServiceImpl implements ContractorService {
     private final CountryRepository countryRepository;
     private final IndustryRepository industryRepository;
     private final OrgFormRepository orgFormRepository;
-    private static final String DEFAULT_USER_ID = "1";
 
     /**
      * Поиск контрагента по заданным параметрам.
@@ -60,10 +59,10 @@ public class ContractorServiceImpl implements ContractorService {
      * @param pageable объект пагинации.
      * @return DTO содержащее список пагинированных контрагентов.
      */
-    public ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable, Authentication authentication) {
+    public ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable, UserDetailsImpl userDetails) {
         Specification<Contractor> spec = ContractorSpecifications.getContractorByParameters(payload);
 
-        Set<String> userRoles = getUserRoles(authentication);
+        Set<String> userRoles = getUserRoles(userDetails);
 
         validateUserRoles(payload, userRoles);
 
@@ -85,9 +84,9 @@ public class ContractorServiceImpl implements ContractorService {
      * @return DTO содержащее список пагинированных контрагентов.
      */
     @Override
-    public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable, Authentication authentication) {
+    public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable, UserDetailsImpl userDetails) {
 
-        Set<String> userRoles = getUserRoles(authentication);
+        Set<String> userRoles = getUserRoles(userDetails);
 
         validateUserRoles(payload, userRoles);
 
@@ -110,11 +109,11 @@ public class ContractorServiceImpl implements ContractorService {
      */
     @Override
     @Transactional
-    public ContractorDto saveOrUpdate(NewContractorPayload payload) {
+    public ContractorDto saveOrUpdate(NewContractorPayload payload, String userId) {
 
         return ContractorDto.from(contractorRepository.findById(payload.id())
-                .map(existingContractor -> updateExistingContractor(payload, existingContractor))
-                .orElseGet(() -> createNewContractor(payload)));
+                .map(existingContractor -> updateExistingContractor(payload, existingContractor, userId))
+                .orElseGet(() -> createNewContractor(payload, userId)));
     }
 
     /**
@@ -172,13 +171,13 @@ public class ContractorServiceImpl implements ContractorService {
      * @param payload  dto контрагента.
      * @return созданный контрагент.
      */
-    private Contractor createNewContractor(NewContractorPayload payload) {
+    private Contractor createNewContractor(NewContractorPayload payload, String userId) {
         Country country = countryRepository.findById(payload.country_id()).orElseThrow(() -> new CountryNotFoundException("Country not found"));
         Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
         OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
 
         return contractorRepository.save(
-                NewContractorPayload.toContractor(payload, country, industry, orgForm, DEFAULT_USER_ID)
+                NewContractorPayload.toContractor(payload, country, industry, orgForm, userId)
         );
     }
 
@@ -187,7 +186,7 @@ public class ContractorServiceImpl implements ContractorService {
      * @param existingContractor объект изменяемого контрагента.
      * @return объект обновленного контрагента.
      */
-    private Contractor updateExistingContractor(NewContractorPayload payload, Contractor existingContractor) {
+    private Contractor updateExistingContractor(NewContractorPayload payload, Contractor existingContractor, String userId) {
         Country country = countryRepository.findById(payload.country_id()).orElseThrow(() -> new CountryNotFoundException("Country not found"));
         Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
         OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
@@ -201,24 +200,20 @@ public class ContractorServiceImpl implements ContractorService {
         existingContractor.setIndustry(industry);
         existingContractor.setOrgForm(orgForm);
         existingContractor.setModifyDate(new Date());
-        existingContractor.setModifyUserId(DEFAULT_USER_ID);
+        existingContractor.setModifyUserId(userId);
         existingContractor.setActive(true);
         return contractorRepository.save(existingContractor);
     }
 
-    private Set<String> getUserRoles(Authentication authentication) {
-        return authentication.getAuthorities().stream()
+    private Set<String> getUserRoles(UserDetailsImpl userDetails) { // Изменено здесь
+        return userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
     }
 
     private void validateUserRoles(ContractorFiltersPayload payload, Set<String> userRoles) {
-        boolean isContractorUser = userRoles.contains("CONTRACTOR_RUS");
-
-        if (isContractorUser) {
-            if (!payload.countryName().equals("Россия")) {
-                throw new AuthenticationServiceException("Wrong");
-            }
+        if (userRoles.contains("CONTRACTOR_RUS") && !payload.countryName().equals("Россия")) {
+            throw new AuthenticationServiceException("Пользователь с вашей ролью не может просматривать эти данные.");
         }
     }
 

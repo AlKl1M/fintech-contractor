@@ -1,5 +1,6 @@
 package com.alkl1m.contractor.filter;
 
+import com.alkl1m.contractor.service.impl.UserDetailsImpl;
 import com.alkl1m.contractor.util.JwtUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -33,14 +34,22 @@ public class JwtFilter extends OncePerRequestFilter {
             String jwt = cookie.getValue();
             try {
                 Claims claims = jwtUtils.parseJwt(jwt);
-                String login = jwtUtils.getLoginFromClaims(claims);
 
-                List<GrantedAuthority> authorities = jwtUtils.getAuthoritiesFromClaims(claims);
+                if (jwtUtils.isTokenExpired(claims)) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT токен истек");
+                    return;
+                }
 
-                Authentication authentication = new UsernamePasswordAuthenticationToken(login, null, authorities);
+                UserDetailsImpl userDetails = UserDetailsImpl.build(
+                        String.valueOf(jwtUtils.getIdFromClaims(claims)),
+                        jwtUtils.getLoginFromClaims(claims),
+                        jwtUtils.getAuthoritiesFromClaims(claims)
+                );
+
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
-                // TODO
+                logger.error("Не получается выполнить аутентификацию юзеру: {}", e);
             }
         }
         filterChain.doFilter(request, response);
