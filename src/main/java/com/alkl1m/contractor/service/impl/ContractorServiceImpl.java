@@ -25,7 +25,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -151,7 +150,7 @@ public class ContractorServiceImpl implements ContractorService {
      * Изменение статуса основного заемщика у контрагента.
      *
      * @param contractorId уникальный идентификатор контрагента.
-     * @param main статус основного заемщика контрагента.
+     * @param main         статус основного заемщика контрагента.
      */
     @Override
     @Transactional
@@ -168,7 +167,7 @@ public class ContractorServiceImpl implements ContractorService {
     /**
      * Метод для создания нового контрагента если не передан id.
      *
-     * @param payload  dto контрагента.
+     * @param payload dto контрагента.
      * @return созданный контрагент.
      */
     private Contractor createNewContractor(NewContractorPayload payload, String userId) {
@@ -205,7 +204,7 @@ public class ContractorServiceImpl implements ContractorService {
         return contractorRepository.save(existingContractor);
     }
 
-    private Set<String> getUserRoles(UserDetailsImpl userDetails) { // Изменено здесь
+    private Set<String> getUserRoles(UserDetailsImpl userDetails) {
         return userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
@@ -213,7 +212,7 @@ public class ContractorServiceImpl implements ContractorService {
 
     private void validateUserRoles(ContractorFiltersPayload payload, Set<String> userRoles) {
         if (userRoles.contains("CONTRACTOR_RUS") && !payload.countryName().equals("Россия")) {
-            throw new AuthenticationServiceException("Пользователь с вашей ролью не может просматривать эти данные.");
+            throw new AuthenticationServiceException("Пользователь с такой ролью не может просматривать эти данные.");
         }
     }
 
