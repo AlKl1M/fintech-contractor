@@ -114,6 +114,22 @@ class ContractorControllerTest {
 
     @Test
     @Sql("/sql/contractors.sql")
+    void testGetContractorsByParameters_withCountryRusUserAndEmptyParameters_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("CONTRACTOR_RUS");
+        String jwt = JwtUtil.generateJwt("contractorrus", roles);
+        mockMvc.perform(MockMvcRequestBuilders.post("/contractor/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
+                        .content("""
+                                {}
+                                """))
+                .andExpectAll(
+                        status().isOk()
+                );
+    }
+
+    @Test
+    @Sql("/sql/contractors.sql")
     void testGetContractorsByParameters_withUserAndRusParameter_returnsValidData() throws Exception {
         List<String> roles = Arrays.asList("USER");
         String jwt = JwtUtil.generateJwt("user", roles);
