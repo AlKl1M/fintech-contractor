@@ -4,6 +4,7 @@ import com.alkl1m.contractor.domain.entitiy.Contractor;
 import com.alkl1m.contractor.domain.entitiy.Country;
 import com.alkl1m.contractor.domain.entitiy.Industry;
 import com.alkl1m.contractor.domain.entitiy.OrgForm;
+import com.alkl1m.contractor.domain.enums.ERole;
 import com.alkl1m.contractor.domain.exception.ContractorNotFoundException;
 import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
 import com.alkl1m.contractor.domain.exception.IndustryNotFoundException;
@@ -26,10 +27,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -61,7 +64,7 @@ public class ContractorServiceImpl implements ContractorService {
     public ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable, UserDetailsImpl userDetails) {
         Specification<Contractor> spec = ContractorSpecifications.getContractorByParameters(payload);
 
-        Set<String> userRoles = getUserRoles(userDetails);
+        Set<GrantedAuthority> userRoles = getUserRoles(userDetails);
 
         validateUserRoles(payload, userRoles);
 
@@ -84,8 +87,7 @@ public class ContractorServiceImpl implements ContractorService {
      */
     @Override
     public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable, UserDetailsImpl userDetails) {
-
-        Set<String> userRoles = getUserRoles(userDetails);
+        Set<GrantedAuthority> userRoles = getUserRoles(userDetails);
 
         validateUserRoles(payload, userRoles);
 
@@ -204,16 +206,24 @@ public class ContractorServiceImpl implements ContractorService {
         return contractorRepository.save(existingContractor);
     }
 
-    private Set<String> getUserRoles(UserDetailsImpl userDetails) {
-        return userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
-    }
+    private void validateUserRoles(ContractorFiltersPayload payload, Set<GrantedAuthority> userRoles) {
+        if (hasRole(userRoles, ERole.CONTRACTOR_SUPERUSER) || hasRole(userRoles, ERole.SUPERUSER)) {
+            return;
+        }
 
-    private void validateUserRoles(ContractorFiltersPayload payload, Set<String> userRoles) {
-        if (userRoles.contains("CONTRACTOR_RUS") && !payload.countryName().equals("Россия")) {
+        String country = Optional.ofNullable(payload.countryName()).orElse("Россия");
+
+        if (hasRole(userRoles, ERole.CONTRACTOR_RUS) && !"Россия".equals(country)) {
             throw new AuthenticationServiceException("Пользователь с такой ролью не может просматривать эти данные.");
         }
+    }
+
+    private Set<GrantedAuthority> getUserRoles(UserDetailsImpl userDetails) {
+        return new HashSet<>(userDetails.getAuthorities());
+    }
+
+    private boolean hasRole(Set<GrantedAuthority> userRoles, ERole role) {
+        return userRoles.contains(new SimpleGrantedAuthority(role.name()));
     }
 
 }

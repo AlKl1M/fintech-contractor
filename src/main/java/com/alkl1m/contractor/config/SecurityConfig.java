@@ -36,12 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/**").hasAnyAuthority("USER", "CREDIT_USER", "OVERDRAFT_USER", "DEAL_SUPERUSER", "CONTRACTOR_RUS", "CONTRACTOR_SUPERUSER", "SUPERUSER")
-                                .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority("CONTRACTOR_SUPERUSER", "SUPERUSER")
-                                .requestMatchers(HttpMethod.PATCH, "/**").hasAnyAuthority("CONTRACTOR_SUPERUSER", "SUPERUSER")
-                                .requestMatchers(HttpMethod.POST, "/contractor/search").hasAnyAuthority("CONTRACTOR_RUS", "DEAL_SUPERUSER", "SUPERUSER")
-                                .requestMatchers(HttpMethod.POST, "/contractor/crud/search").hasAnyAuthority("CONTRACTOR_RUS", "DEAL_SUPERUSER", "SUPERUSER")
-                                .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("CONTRACTOR_SUPERUSER", "SUPERUSER")
+                                .requestMatchers("/**").hasAnyAuthority("USER", "CREDIT_USER", "OVERDRAFT_USER", "DEAL_SUPERUSER", "CONTRACTOR_RUS", "CONTRACTOR_SUPERUSER", "SUPERUSER")
                                 .anyRequest().authenticated());
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
