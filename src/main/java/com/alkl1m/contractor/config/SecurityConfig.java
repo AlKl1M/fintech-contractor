@@ -1,5 +1,6 @@
 package com.alkl1m.contractor.config;
 
+import com.alkl1m.authutilsspringbootautoconfigure.domain.enums.ERole;
 import com.alkl1m.authutilsspringbootautoconfigure.security.filter.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +36,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/**").hasAnyAuthority("USER", "CREDIT_USER", "OVERDRAFT_USER", "DEAL_SUPERUSER", "CONTRACTOR_RUS", "CONTRACTOR_SUPERUSER", "SUPERUSER")
+                                .requestMatchers("/**").hasAnyAuthority(ERole.USER.name(),
+                                        ERole.CREDIT_USER.name(),
+                                        ERole.OVERDRAFT_USER.name(),
+                                        ERole.DEAL_SUPERUSER.name(),
+                                        ERole.CONTRACTOR_RUS.name(),
+                                        ERole.CONTRACTOR_SUPERUSER.name(),
+                                        ERole.SUPERUSER.name())
                                 .anyRequest().authenticated());
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
