@@ -1,12 +1,11 @@
 package com.alkl1m.contractor.service;
 
-import com.alkl1m.contractor.service.impl.UserDetailsImpl;
+import com.alkl1m.authutilsspringbootautoconfigure.service.impl.UserDetailsImpl;
 import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.ContractorsDto;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 
 /**
  * @author alkl1m

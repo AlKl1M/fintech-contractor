@@ -1,10 +1,11 @@
 package com.alkl1m.contractor.service.impl;
 
+import com.alkl1m.authutilsspringbootautoconfigure.domain.enums.ERole;
+import com.alkl1m.authutilsspringbootautoconfigure.service.impl.UserDetailsImpl;
 import com.alkl1m.contractor.domain.entitiy.Contractor;
 import com.alkl1m.contractor.domain.entitiy.Country;
 import com.alkl1m.contractor.domain.entitiy.Industry;
 import com.alkl1m.contractor.domain.entitiy.OrgForm;
-import com.alkl1m.contractor.domain.enums.ERole;
 import com.alkl1m.contractor.domain.exception.ContractorNotFoundException;
 import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
 import com.alkl1m.contractor.domain.exception.IndustryNotFoundException;
@@ -36,7 +37,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для работы с контрагентами.
