@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,6 +104,7 @@ public class IndustryController {
     })
     @AuditLog
     @PutMapping("/save")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<IndustryDto> saveIndustry(@Validated @RequestBody NewIndustryPayload payload) {
         IndustryDto savedIndustry = industryService.saveIndustry(payload);
         return ResponseEntity.ok(savedIndustry);
@@ -127,6 +129,7 @@ public class IndustryController {
     })
     @AuditLog
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<Void> deleteIndustry(@PathVariable Long id) {
         industryService.deleteIndustry(id);
         return ResponseEntity.ok().build();

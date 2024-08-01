@@ -1,6 +1,8 @@
 package com.alkl1m.contractor.web.controller;
 
+import com.alkl1m.contractor.JwtUtil;
 import com.alkl1m.contractor.TestBeans;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,7 +28,10 @@ class IndustryControllerTest {
 
     @Test
     void testGetAllIndustries_withValidPayload_returnsValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/industry/all"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/industry/all")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.length()").value(105),
@@ -34,7 +42,10 @@ class IndustryControllerTest {
 
     @Test
     void testGetIndustryById_withValidPayload_returnsValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/industry/{id}", "1"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/industry/{id}", "1")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk(),
                         content().json(
@@ -50,7 +61,10 @@ class IndustryControllerTest {
 
     @Test
     void testGetIndustryById_withInvalidId_returnsError() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/industry/{id}", "100000"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/industry/{id}", "100000")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
@@ -62,7 +76,10 @@ class IndustryControllerTest {
 
     @Test
     void testGetIndustryById_withInvalidPayload_returnsErrorMessage() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/industry/{id}", 100000))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/industry/{id}", 100000)
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
@@ -76,8 +93,11 @@ class IndustryControllerTest {
 
     @Test
     void testSaveIndustry_withValidPayload_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/industry/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": 10,
@@ -97,8 +117,11 @@ class IndustryControllerTest {
 
     @Test
     void testSaveIndustry_withInvalidPayload_returnsErrorMessage() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/industry/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": null,
@@ -120,7 +143,10 @@ class IndustryControllerTest {
 
     @Test
     void testDeleteIndustry_withValidData_returnsValidStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/industry/delete/{id}", 10))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/industry/delete/{id}", 10)
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk()
                 );
@@ -128,7 +154,10 @@ class IndustryControllerTest {
 
     @Test
     void testDeleteIndustry_withInvalidPayload_returnsErrorMessage() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/industry/delete/{id}", 100000))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/industry/delete/{id}", 100000)
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""

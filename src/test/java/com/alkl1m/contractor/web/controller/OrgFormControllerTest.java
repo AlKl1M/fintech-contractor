@@ -1,6 +1,8 @@
 package com.alkl1m.contractor.web.controller;
 
+import com.alkl1m.contractor.JwtUtil;
 import com.alkl1m.contractor.TestBeans;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -22,7 +27,10 @@ class OrgFormControllerTest {
 
     @Test
     void testGetAllOrgForms_withValidPayload_returnsValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/orgform/all"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/orgform/all")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.length()").value(206),
@@ -33,7 +41,10 @@ class OrgFormControllerTest {
 
     @Test
     void testGetOrgFormById_withValidPayload_returnsValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/orgform/{id}", "1"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/orgform/{id}", "1")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk(),
                         content().json(
@@ -49,7 +60,10 @@ class OrgFormControllerTest {
 
     @Test
     void testGetOrgFormById_withInvalidPayload_returnsErrorMessage() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/orgform/{id}", 100000))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/orgform/{id}", 100000)
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
@@ -63,8 +77,11 @@ class OrgFormControllerTest {
 
     @Test
     void testSaveOrgForm_withValidPayload_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/orgform/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": 10,
@@ -84,8 +101,11 @@ class OrgFormControllerTest {
 
     @Test
     void testSaveOrgForm_withInvalidPayload_returnsErrorMessage() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/orgform/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": null,
@@ -107,7 +127,10 @@ class OrgFormControllerTest {
 
     @Test
     void testDeleteOrgForm_withValidPayload_returnsValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/orgform/delete/{id}", 10))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/orgform/delete/{id}", 10)
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk()
                 );
@@ -115,7 +138,10 @@ class OrgFormControllerTest {
 
     @Test
     void testDeleteOrgForm_withInvalidPayload_returnsErrorMessage() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/orgform/delete/{id}", 100000))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/orgform/delete/{id}", 100000)
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""

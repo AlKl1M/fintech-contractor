@@ -1,6 +1,8 @@
 package com.alkl1m.contractor.web.controller;
 
+import com.alkl1m.contractor.JwtUtil;
 import com.alkl1m.contractor.TestBeans;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,7 +28,10 @@ class CountryControllerTest {
 
     @Test
     void testGetAllCountries_withValidPayload_returnsValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/country/all"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/country/all")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.length()").value(254),
@@ -34,7 +42,10 @@ class CountryControllerTest {
 
     @Test
     void testGetCountryById_withValidPayload_returnsValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/country/{id}", "ABH"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/country/{id}", "ABH")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk(),
                         content().json(
@@ -50,20 +61,26 @@ class CountryControllerTest {
 
     @Test
     void testGetCountryById_withInvalidId_returnsError() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/country/{id}", "AAA"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.get("/country/{id}", "AAA")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isBadRequest(),
                         content().json("""
-                        {"message":"Country with id AAA not found!","errors":null}
-                        """
+                                {"message":"Country with id AAA not found!","errors":null}
+                                """
                         )
                 );
     }
 
     @Test
     void testSaveCountry_withValidPayload_returnsValidData() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": "ABH",
@@ -83,8 +100,11 @@ class CountryControllerTest {
 
     @Test
     void testSaveCountry_withInvalidPayload_returnsErrorMessage() throws Exception {
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
         mockMvc.perform(MockMvcRequestBuilders.put("/country/save")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("jwt", jwt))
                         .content("""
                                 {
                                   "id": null,
@@ -107,7 +127,10 @@ class CountryControllerTest {
 
     @Test
     void testDeleteCountry_withValidPayload_returnsValidStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/country/delete/{id}", "ABH"))
+        List<String> roles = Arrays.asList("SUPERUSER");
+        String jwt = JwtUtil.generateJwt("superuser", roles);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/country/delete/{id}", "ABH")
+                        .cookie(new Cookie("jwt", jwt)))
                 .andExpectAll(
                         status().isOk()
                 );

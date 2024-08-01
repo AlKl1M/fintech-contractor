@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,21 @@ public class ControllerAdvice {
             final IllegalStateException e
     ) {
         return new ExceptionBody(e.getMessage());
+    }
+
+    /**
+     * Метод для обработки AccessDeniedException.
+     *
+     * @param e исключение AccessDeniedException.
+     * @return объект ExceptionBody с сообщением об ошибке и деталями валидации.
+     */
+    @ExceptionHandler({
+            AccessDeniedException.class,
+            org.springframework.security.access.AccessDeniedException.class
+    })
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionBody handleAccessDenied() {
+        return new ExceptionBody("Access denied.");
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.alkl1m.contractor.web.controller;
 
 import com.alkl1m.auditlogspringbootautoconfigure.annotation.AuditLog;
+import com.alkl1m.authutilsspringbootautoconfigure.service.impl.UserDetailsImpl;
 import com.alkl1m.contractor.service.ContractorService;
 import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
@@ -18,8 +19,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 /**
  * RestController для работы с контрагентами.
@@ -55,14 +61,15 @@ public class ContractorController {
     })
     @AuditLog
     @PostMapping("/search")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_RUS', 'CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<ContractorsDto> getContractorsByParameters(
             @RequestBody ContractorFiltersPayload payload,
             @RequestParam(defaultValue = "0", required = false) Integer page,
-            @RequestParam(defaultValue = "10", required = false) Integer size
+            @RequestParam(defaultValue = "10", required = false) Integer size,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Pageable paging = PageRequest.of(page, size);
-        ContractorsDto contractorPage = contractorService.getContractorsByParameters(payload, paging);
-        return ResponseEntity.ok().body(contractorPage);
+        return ResponseEntity.ok().body(contractorService.getContractorsByParameters(payload, paging, userDetails));
     }
 
     /**
@@ -84,6 +91,7 @@ public class ContractorController {
     })
     @AuditLog
     @PatchMapping("/main-borrower")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<Void> mainBorrower(@Validated @RequestBody MainBorrowerRequest request) {
         contractorService.changeMainBorrower(request.contractorId(), request.main());
         return ResponseEntity.ok().build();
@@ -110,13 +118,15 @@ public class ContractorController {
     })
     @AuditLog
     @PostMapping("/crud/search")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_RUS', 'CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<ContractorsDto> getContractorPageableByIdd(
             @RequestBody ContractorFiltersPayload payload,
             @RequestParam(defaultValue = "0", required = false) Integer page,
-            @RequestParam(defaultValue = "10", required = false) Integer size
+            @RequestParam(defaultValue = "10", required = false) Integer size,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Pageable paging = PageRequest.of(page, size);
-        ContractorsDto contractorsPage = contractorService.getContractorsWithCrudByParameters(payload, paging);
+        ContractorsDto contractorsPage = contractorService.getContractorsWithCrudByParameters(payload, paging, userDetails);
         return ResponseEntity.ok().body(contractorsPage);
     }
 
@@ -163,8 +173,11 @@ public class ContractorController {
     })
     @AuditLog
     @PutMapping("/save")
-    public ResponseEntity<ContractorDto> saveOrUpdateContractor(@Validated @RequestBody NewContractorPayload payload) {
-        ContractorDto savedContractor = contractorService.saveOrUpdate(payload);
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
+    public ResponseEntity<ContractorDto> saveOrUpdateContractor(
+            @Validated @RequestBody NewContractorPayload payload,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ContractorDto savedContractor = contractorService.saveOrUpdate(payload, userDetails.getId());
         return ResponseEntity.ok(savedContractor);
     }
 
@@ -185,6 +198,7 @@ public class ContractorController {
     })
     @AuditLog
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<Void> deleteContractorById(@PathVariable String id) {
         contractorService.deleteContractorById(id);
         return ResponseEntity.ok().build();

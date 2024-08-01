@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,6 +104,7 @@ public class CountryController {
     })
     @AuditLog
     @PutMapping("/save")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<CountryDto> saveCountry(@Validated @RequestBody NewCountryPayload payload) {
         CountryDto savedCountry = countryService.saveCountry(payload);
         return ResponseEntity.ok(savedCountry);
@@ -127,6 +129,7 @@ public class CountryController {
     })
     @AuditLog
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<Void> deleteCountry(@PathVariable String id) {
         countryService.deleteCountry(id);
         return ResponseEntity.ok().build();

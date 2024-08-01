@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,6 +106,7 @@ public class OrgFormController {
     })
     @AuditLog
     @PutMapping("/save")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<OrgFormDto> saveOrgForm(@Validated @RequestBody NewOrgFormPayload payload) {
         OrgFormDto savedOrgForm = orgFormService.saveOrgForm(payload);
         return ResponseEntity.ok(savedOrgForm);
@@ -129,6 +131,7 @@ public class OrgFormController {
     })
     @AuditLog
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
     public ResponseEntity<Void> deleteOrgForm(@PathVariable Long id) {
         orgFormService.deleteOrgForm(id);
         return ResponseEntity.ok().build();

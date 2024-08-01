@@ -1,5 +1,7 @@
 package com.alkl1m.contractor.service.impl;
 
+import com.alkl1m.authutilsspringbootautoconfigure.domain.enums.ERole;
+import com.alkl1m.authutilsspringbootautoconfigure.service.impl.UserDetailsImpl;
 import com.alkl1m.contractor.domain.entitiy.Contractor;
 import com.alkl1m.contractor.domain.entitiy.Country;
 import com.alkl1m.contractor.domain.entitiy.Industry;
@@ -24,12 +26,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Реализация сервиса для работы с контрагентами.
@@ -46,7 +53,6 @@ public class ContractorServiceImpl implements ContractorService {
     private final CountryRepository countryRepository;
     private final IndustryRepository industryRepository;
     private final OrgFormRepository orgFormRepository;
-    private static final String DEFAULT_USER_ID = "1";
 
     /**
      * Поиск контрагента по заданным параметрам.
@@ -55,8 +61,12 @@ public class ContractorServiceImpl implements ContractorService {
      * @param pageable объект пагинации.
      * @return DTO содержащее список пагинированных контрагентов.
      */
-    public ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable) {
+    public ContractorsDto getContractorsByParameters(ContractorFiltersPayload payload, Pageable pageable, UserDetailsImpl userDetails) {
         Specification<Contractor> spec = ContractorSpecifications.getContractorByParameters(payload);
+
+        Set<GrantedAuthority> userRoles = getUserRoles(userDetails);
+
+        validateUserRoles(payload, userRoles);
 
         Page<Contractor> contractorsPage = contractorRepository.findAll(spec, pageable);
 
@@ -76,7 +86,11 @@ public class ContractorServiceImpl implements ContractorService {
      * @return DTO содержащее список пагинированных контрагентов.
      */
     @Override
-    public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable) {
+    public ContractorsDto getContractorsWithCrudByParameters(ContractorFiltersPayload payload, Pageable pageable, UserDetailsImpl userDetails) {
+        Set<GrantedAuthority> userRoles = getUserRoles(userDetails);
+
+        validateUserRoles(payload, userRoles);
+
         Page<Contractor> contractorsPage = contractorJdbcRepository.getContractorByParameters(payload, pageable);
 
         List<ContractorDto> contractorDtos = contractorsPage.getContent()
@@ -96,11 +110,11 @@ public class ContractorServiceImpl implements ContractorService {
      */
     @Override
     @Transactional
-    public ContractorDto saveOrUpdate(NewContractorPayload payload) {
+    public ContractorDto saveOrUpdate(NewContractorPayload payload, String userId) {
 
         return ContractorDto.from(contractorRepository.findById(payload.id())
-                .map(existingContractor -> updateExistingContractor(payload, existingContractor))
-                .orElseGet(() -> createNewContractor(payload)));
+                .map(existingContractor -> updateExistingContractor(payload, existingContractor, userId))
+                .orElseGet(() -> createNewContractor(payload, userId)));
     }
 
     /**
@@ -138,7 +152,7 @@ public class ContractorServiceImpl implements ContractorService {
      * Изменение статуса основного заемщика у контрагента.
      *
      * @param contractorId уникальный идентификатор контрагента.
-     * @param main статус основного заемщика контрагента.
+     * @param main         статус основного заемщика контрагента.
      */
     @Override
     @Transactional
@@ -155,16 +169,16 @@ public class ContractorServiceImpl implements ContractorService {
     /**
      * Метод для создания нового контрагента если не передан id.
      *
-     * @param payload  dto контрагента.
+     * @param payload dto контрагента.
      * @return созданный контрагент.
      */
-    private Contractor createNewContractor(NewContractorPayload payload) {
+    private Contractor createNewContractor(NewContractorPayload payload, String userId) {
         Country country = countryRepository.findById(payload.country_id()).orElseThrow(() -> new CountryNotFoundException("Country not found"));
         Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
         OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
 
         return contractorRepository.save(
-                NewContractorPayload.toContractor(payload, country, industry, orgForm, DEFAULT_USER_ID)
+                NewContractorPayload.toContractor(payload, country, industry, orgForm, userId)
         );
     }
 
@@ -173,7 +187,7 @@ public class ContractorServiceImpl implements ContractorService {
      * @param existingContractor объект изменяемого контрагента.
      * @return объект обновленного контрагента.
      */
-    private Contractor updateExistingContractor(NewContractorPayload payload, Contractor existingContractor) {
+    private Contractor updateExistingContractor(NewContractorPayload payload, Contractor existingContractor, String userId) {
         Country country = countryRepository.findById(payload.country_id()).orElseThrow(() -> new CountryNotFoundException("Country not found"));
         Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
         OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
@@ -187,9 +201,29 @@ public class ContractorServiceImpl implements ContractorService {
         existingContractor.setIndustry(industry);
         existingContractor.setOrgForm(orgForm);
         existingContractor.setModifyDate(new Date());
-        existingContractor.setModifyUserId(DEFAULT_USER_ID);
+        existingContractor.setModifyUserId(userId);
         existingContractor.setActive(true);
         return contractorRepository.save(existingContractor);
+    }
+
+    private void validateUserRoles(ContractorFiltersPayload payload, Set<GrantedAuthority> userRoles) {
+        if (hasRole(userRoles, ERole.CONTRACTOR_SUPERUSER) || hasRole(userRoles, ERole.SUPERUSER)) {
+            return;
+        }
+
+        String country = Optional.ofNullable(payload.countryName()).orElse("Россия");
+
+        if (hasRole(userRoles, ERole.CONTRACTOR_RUS) && !"Россия".equals(country)) {
+            throw new AuthenticationServiceException("Пользователь с такой ролью не может просматривать эти данные.");
+        }
+    }
+
+    private Set<GrantedAuthority> getUserRoles(UserDetailsImpl userDetails) {
+        return new HashSet<>(userDetails.getAuthorities());
+    }
+
+    private boolean hasRole(Set<GrantedAuthority> userRoles, ERole role) {
+        return userRoles.contains(new SimpleGrantedAuthority(role.name()));
     }
 
 }
