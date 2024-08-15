@@ -29,10 +29,3 @@ application:
   security:
     jwt:
       secret: YiJW5JhK3uv6q8InoJgQYP3hmOEP/79009Y/6/Xeamxq9DnYSVZzU1m5iFRCNWymmBAmLmYmY2C1KcSqX5aELlN7fkLdJtehwaSjWotfrESvUIap6VI9GyMglmeuBPTfFQMHJM7qhLwZQXHIrA3sRjvSrDHNTffuEHmKqtWuXgIX%
-deal:
-  contractorQueue: main-borrower.queue
-  dealUpdateQueue: deals_contractor_queue
-  dealCreateQueue: deals_create_contractor_queue
-  dealExchange: contractors_contractor_exchange
-  dealUpdateRoutingKey: contractors_update_contractor-routing-key
-  dealCreateRoutingKey: contractors_create_contractor-routing-key

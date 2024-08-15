@@ -10,7 +10,6 @@ import com.alkl1m.contractor.domain.exception.ContractorNotFoundException;
 import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
 import com.alkl1m.contractor.domain.exception.IndustryNotFoundException;
 import com.alkl1m.contractor.domain.exception.OrgFormNotFoundException;
-import com.alkl1m.contractor.rabbitmq.ContractorProducer;
 import com.alkl1m.contractor.repository.jdbc.ContractorJdbcRepository;
 import com.alkl1m.contractor.repository.ContractorRepository;
 import com.alkl1m.contractor.repository.CountryRepository;
@@ -55,7 +54,6 @@ public class ContractorServiceImpl implements ContractorService {
     private final CountryRepository countryRepository;
     private final IndustryRepository industryRepository;
     private final OrgFormRepository orgFormRepository;
-    private final ContractorProducer contractorProducer;
 
     /**
      * Поиск контрагента по заданным параметрам.
@@ -186,7 +184,6 @@ public class ContractorServiceImpl implements ContractorService {
 
         UpdateContractorMessage message = new UpdateContractorMessage(save.getId(), save.getName(), save.getInn());
 
-        contractorProducer.sendCreateMessage(message);
 
         return save;
     }
@@ -217,7 +214,6 @@ public class ContractorServiceImpl implements ContractorService {
 
         UpdateContractorMessage message = new UpdateContractorMessage(save.getId(), save.getName(), save.getInn());
 
-        contractorProducer.sendUpdateMessage(message);
 
         return save;
     }
