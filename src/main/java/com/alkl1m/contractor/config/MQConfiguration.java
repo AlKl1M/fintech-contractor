@@ -19,12 +19,12 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 public class MQConfiguration {
-    @Value("${deal.contractorQueue}")
-    private String queueName;
-    @Value("${deal.contractorExchange}")
+    @Value("${deal.dealUpdateQueue}")
+    private String dealUpdateQueue;
+    @Value("${deal.dealExchange}")
     private String exchangeName;
-    @Value("${deal.contractorRoutingKey}")
-    private String contractorRoutingKey;
+    @Value("${deal.dealUpdateRoutingKey}")
+    private String updateRoutingKey;
 
     @Bean
     RabbitTemplate amqpTemplate(ConnectionFactory connectionFactory, Jackson2ObjectMapperBuilder builder) {
@@ -49,8 +49,8 @@ public class MQConfiguration {
     }
 
     @Bean
-    Queue mainBorrowerQueue() {
-        return QueueBuilder.durable(queueName)
+    Queue updateQueue() {
+        return QueueBuilder.durable(dealUpdateQueue)
                 .build();
     }
 
@@ -60,8 +60,8 @@ public class MQConfiguration {
     }
 
     @Bean
-    Binding orderBinding(Queue mainBorrowerQueue, DirectExchange contractorExchange) {
-        return BindingBuilder.bind(mainBorrowerQueue).to(contractorExchange).with(contractorRoutingKey);
+    Binding updateBinding(Queue updateQueue, DirectExchange contractorExchange) {
+        return BindingBuilder.bind(updateQueue).to(contractorExchange).with(updateRoutingKey);
     }
 
 }
