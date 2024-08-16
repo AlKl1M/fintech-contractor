@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
@@ -51,13 +50,6 @@ public class MQConfiguration {
     }
 
     @Bean
-    Queue contractorQueue() {
-        return QueueBuilder.durable(DEAL_CONTRACTOR_QUEUE)
-                .withArgument("x-dead-letter-exchange", DLX_EXCHANGE_MESSAGES)
-                .build();
-    }
-
-    @Bean
     FanoutExchange deadLetterExchange() {
         return new FanoutExchange(DLX_EXCHANGE_MESSAGES);
     }
@@ -71,13 +63,9 @@ public class MQConfiguration {
     }
 
     @Bean
-    DirectExchange contractorExchange() {
-        return new DirectExchange(CONTRACTORS_EXCHANGE);
-    }
-
-    @Bean
-    Binding bindingMessages() {
-        return BindingBuilder.bind(contractorQueue()).to(contractorExchange()).with(DEAL_CONTRACTOR_QUEUE);
+    Queue mainBorrowerQueue() {
+        return QueueBuilder.durable(UPDATE_MAIN_BORROWER)
+                .build();
     }
 
     @Bean
