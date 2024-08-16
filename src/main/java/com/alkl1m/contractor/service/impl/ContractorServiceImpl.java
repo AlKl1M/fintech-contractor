@@ -35,6 +35,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -216,7 +219,15 @@ public class ContractorServiceImpl implements ContractorService {
 
         Contractor save = contractorRepository.save(existingContractor);
 
-        UpdateContractorMessage message = new UpdateContractorMessage(save.getId(), save.getName(), save.getInn(), LocalDate.now().toString(), userId);
+        ZonedDateTime nowInMoscowTimeZone = ZonedDateTime.now(ZoneId.of("Europe/Moscow"));
+
+        UpdateContractorMessage message = new UpdateContractorMessage(
+                save.getId(),
+                save.getName(),
+                save.getInn(),
+                nowInMoscowTimeZone.format(DateTimeFormatter.ISO_ZONED_DATE_TIME),
+                userId
+        );
 
         contractorProducer.sendUpdateMessage(message);
 
