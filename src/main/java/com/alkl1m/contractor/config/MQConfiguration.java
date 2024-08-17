@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
@@ -18,13 +19,14 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
 public class MQConfiguration {
-
-    public static final String UPDATE_MAIN_BORROWER = "deals_update_main_borrower_queue";
+    public static final String UPDATE_MAIN_BORROWER_QUEUE = "deals_update_main_borrower_queue";
+    public static final String UPDATE_MAIN_BORROWER_EXC = "deals_update_main_borrower_exchange";
+    public static final String UPDATE_MAIN_BORROWER_ROUTING_KEY = "deals_update_main_borrower_routing_key";
 
     public static final String CONTRACTORS_EXCHANGE = "contractors_contractor_exchange";
+
     public static final String DEAL_CONTRACTOR_QUEUE = "deals_contractor_queue";
     public static final String DEAL_CONTRACTOR_DLQ = "deals_dead_contractor_queue";
-
     public static final String DLX_EXCHANGE_MESSAGES = "deals_dead_contractor_exchange";
 
     @Bean
@@ -50,8 +52,16 @@ public class MQConfiguration {
     }
 
     @Bean
-    FanoutExchange deadLetterExchange() {
-        return new FanoutExchange(DLX_EXCHANGE_MESSAGES);
+    Queue mainBorrowerQueue() {
+        return QueueBuilder.durable(UPDATE_MAIN_BORROWER_QUEUE)
+                .build();
+    }
+
+    @Bean
+    Queue contractorQueue() {
+        return QueueBuilder.durable(DEAL_CONTRACTOR_QUEUE)
+                .withArgument("x-dead-letter-exchange", DLX_EXCHANGE_MESSAGES)
+                .build();
     }
 
     @Bean
@@ -63,9 +73,28 @@ public class MQConfiguration {
     }
 
     @Bean
-    Queue mainBorrowerQueue() {
-        return QueueBuilder.durable(UPDATE_MAIN_BORROWER)
-                .build();
+    DirectExchange mainBorrowerExchange() {
+        return new DirectExchange(UPDATE_MAIN_BORROWER_EXC);
+    }
+
+    @Bean
+    DirectExchange contractorExchange() {
+        return new DirectExchange(CONTRACTORS_EXCHANGE);
+    }
+
+    @Bean
+    FanoutExchange deadLetterExchange() {
+        return new FanoutExchange(DLX_EXCHANGE_MESSAGES);
+    }
+
+    @Bean
+    Binding mainBorrowerBinding() {
+        return BindingBuilder.bind(mainBorrowerQueue()).to(mainBorrowerExchange()).with(UPDATE_MAIN_BORROWER_ROUTING_KEY);
+    }
+
+    @Bean
+    Binding bindingMessages() {
+        return BindingBuilder.bind(contractorQueue()).to(contractorExchange()).with(DEAL_CONTRACTOR_QUEUE);
     }
 
     @Bean

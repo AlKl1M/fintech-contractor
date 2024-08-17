@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 public class ContractorProducer {
     private final RabbitTemplate template;
 
-
     public void sendUpdateMessage(UpdateContractorMessage msg) {
         template.convertAndSend(MQConfiguration.CONTRACTORS_EXCHANGE, MQConfiguration.DEAL_CONTRACTOR_QUEUE, msg);
     }
@@ -19,4 +18,5 @@ public class ContractorProducer {
     public void sendCreateMessage(UpdateContractorMessage msg) {
         template.convertAndSend(MQConfiguration.CONTRACTORS_EXCHANGE, MQConfiguration.DEAL_CONTRACTOR_QUEUE, msg);
     }
+
 }
