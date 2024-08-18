@@ -12,11 +12,11 @@ public class ContractorProducer {
     private final RabbitTemplate template;
 
     public void sendUpdateMessage(UpdateContractorMessage msg) {
-        template.convertAndSend(MQConfiguration.CONTRACTORS_EXCHANGE, MQConfiguration.DEAL_CONTRACTOR_QUEUE, msg);
+        template.convertAndSend(MQConfiguration.DEALS_CONTRACTORS_EXC, MQConfiguration.DEALS_CONTRACTOR_NEW_DATA_QUEUE, msg);
     }
 
     public void sendCreateMessage(UpdateContractorMessage msg) {
-        template.convertAndSend(MQConfiguration.CONTRACTORS_EXCHANGE, MQConfiguration.DEAL_CONTRACTOR_QUEUE, msg);
+        template.convertAndSend(MQConfiguration.DEALS_CONTRACTORS_EXC, MQConfiguration.DEALS_CONTRACTOR_NEW_DATA_QUEUE, msg);
     }
 
 }

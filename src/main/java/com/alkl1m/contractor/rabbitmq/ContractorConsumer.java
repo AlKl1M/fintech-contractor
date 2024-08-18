@@ -12,12 +12,8 @@ import org.springframework.stereotype.Component;
 public class ContractorConsumer {
     private final ContractorService contractorService;
 
-    @RabbitListener(queues = MQConfiguration.UPDATE_MAIN_BORROWER_QUEUE)
+    @RabbitListener(id = MQConfiguration.CONTRACTOR_UPDATE_MAIN_BORROWER_QUEUE, queues = MQConfiguration.CONTRACTOR_UPDATE_MAIN_BORROWER_QUEUE)
     public void receiveMessage(MainBorrowerRequest msg) {
-        try {
-            contractorService.changeMainBorrower(msg.contractorId(), msg.main());
-        } catch (Exception e) {
-
-        }
+        contractorService.changeMainBorrower(msg.contractorId(), msg.main());
     }
 }

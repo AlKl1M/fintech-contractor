@@ -25,6 +25,7 @@ spring:
     virtual-host: vhost
     password: 1234
     username: rab
+    millisToResend: 300000
 application:
   security:
     jwt:
