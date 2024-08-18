@@ -63,9 +63,22 @@ class ContractorConsumerITest {
     @Sql("/sql/contractors.sql")
     void testMainBorrowerConsume_withValidData_changesMainBorrower() throws InterruptedException {
         MainBorrowerRequest mainBorrowerRequest = new MainBorrowerRequest("1", true);
-        rabbitTemplate.convertAndSend(MQConfiguration.UPDATE_MAIN_BORROWER_QUEUE, mainBorrowerRequest);
+        rabbitTemplate.convertAndSend(MQConfiguration.CONTRACTOR_UPDATE_MAIN_BORROWER_QUEUE, mainBorrowerRequest);
 
         Thread.sleep(5000);
+
+        assertEquals(contractorRepository.findById(mainBorrowerRequest.contractorId()).get().isActiveMainBorrower(), mainBorrowerRequest.main());
+    }
+
+    @Test
+    @Sql("/sql/contractors.sql")
+    void testMainBorrowerConsume_withPausedListener_changesMainBorrowerAfterPause() throws InterruptedException {
+        registry.stop();
+        MainBorrowerRequest mainBorrowerRequest = new MainBorrowerRequest("1", true);
+        rabbitTemplate.convertAndSend(MQConfiguration.CONTRACTOR_UPDATE_MAIN_BORROWER_QUEUE, mainBorrowerRequest);
+
+        registry.getListenerContainer(MQConfiguration.CONTRACTOR_UPDATE_MAIN_BORROWER_QUEUE).start();
+        Thread.sleep(1000);
 
         assertEquals(contractorRepository.findById(mainBorrowerRequest.contractorId()).get().isActiveMainBorrower(), mainBorrowerRequest.main());
     }

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -55,27 +54,25 @@ class ContractorProducerTest {
     ContractorProducer contractorProducer;
 
     @Test
-    @Sql("/sql/contractors.sql")
     void testSendUpdateMessage_withValidData_savesMessageToQueue() throws InterruptedException {
         UpdateContractorMessage updateContractorMessage = new UpdateContractorMessage("1", "newName", "101010101", ZonedDateTime.now().toString(), "1");
         contractorProducer.sendCreateMessage(updateContractorMessage);
 
         Thread.sleep(5000);
 
-        UpdateContractorMessage receivedMessage = (UpdateContractorMessage) rabbitTemplate.receiveAndConvert(MQConfiguration.DEAL_CONTRACTOR_QUEUE);
+        UpdateContractorMessage receivedMessage = (UpdateContractorMessage) rabbitTemplate.receiveAndConvert(MQConfiguration.DEALS_CONTRACTOR_NEW_DATA_QUEUE);
 
         assertNotNull(receivedMessage);
     }
 
     @Test
-    @Sql("/sql/contractors.sql")
     void testSendUpdateMessage_withValidData_savesMessageToQueue2() throws InterruptedException {
         UpdateContractorMessage updateContractorMessage = new UpdateContractorMessage("1", "newName", "101010101", ZonedDateTime.now().toString(), "1");
         contractorProducer.sendUpdateMessage(updateContractorMessage);
 
         Thread.sleep(5000);
 
-        UpdateContractorMessage receivedMessage = (UpdateContractorMessage) rabbitTemplate.receiveAndConvert(MQConfiguration.DEAL_CONTRACTOR_QUEUE);
+        UpdateContractorMessage receivedMessage = (UpdateContractorMessage) rabbitTemplate.receiveAndConvert(MQConfiguration.DEALS_CONTRACTOR_NEW_DATA_QUEUE);
 
         assertNotNull(receivedMessage);
     }
