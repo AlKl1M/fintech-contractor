@@ -17,6 +17,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.ZonedDateTime;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Testcontainers
@@ -54,27 +56,25 @@ class ContractorProducerTest {
     ContractorProducer contractorProducer;
 
     @Test
-    void testSendCreateMessage_withValidData_savesMessageToQueue() throws InterruptedException {
+    void testSendCreateMessage_withValidData_savesMessageToQueue() {
         UpdateContractorMessage updateContractorMessage = new UpdateContractorMessage("100", "newName", "101010101", ZonedDateTime.now().toString(), "1");
         contractorProducer.sendCreateMessage(updateContractorMessage);
 
-        Thread.sleep(5000);
-
-        UpdateContractorMessage receivedMessage = (UpdateContractorMessage) rabbitTemplate.receiveAndConvert(MQConfiguration.DEALS_CONTRACTOR_NEW_DATA_QUEUE);
-
-        assertNotNull(receivedMessage);
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            UpdateContractorMessage receivedMessage = (UpdateContractorMessage) rabbitTemplate.receiveAndConvert(MQConfiguration.DEALS_CONTRACTOR_NEW_DATA_QUEUE);
+            assertNotNull(receivedMessage);
+        });
     }
 
     @Test
-    void testSendUpdateMessage_withValidData_savesMessageToQueue() throws InterruptedException {
+    void testSendUpdateMessage_withValidData_savesMessageToQueue() {
         UpdateContractorMessage updateContractorMessage = new UpdateContractorMessage("1", "newName", "101010101", ZonedDateTime.now().toString(), "1");
         contractorProducer.sendUpdateMessage(updateContractorMessage);
 
-        Thread.sleep(5000);
-
-        UpdateContractorMessage receivedMessage = (UpdateContractorMessage) rabbitTemplate.receiveAndConvert(MQConfiguration.DEALS_CONTRACTOR_NEW_DATA_QUEUE);
-
-        assertNotNull(receivedMessage);
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            UpdateContractorMessage receivedMessage = (UpdateContractorMessage) rabbitTemplate.receiveAndConvert(MQConfiguration.DEALS_CONTRACTOR_NEW_DATA_QUEUE);
+            assertNotNull(receivedMessage);
+        });
     }
 
 }
