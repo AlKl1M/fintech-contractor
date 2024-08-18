@@ -18,6 +18,8 @@ import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Testcontainers
@@ -61,26 +63,27 @@ class ContractorConsumerITest {
 
     @Test
     @Sql("/sql/contractors.sql")
-    void testMainBorrowerConsume_withValidData_changesMainBorrower() throws InterruptedException {
+    void testMainBorrowerConsume_withValidData_changesMainBorrower() {
         MainBorrowerRequest mainBorrowerRequest = new MainBorrowerRequest("1", true);
         rabbitTemplate.convertAndSend(MQConfiguration.CONTRACTOR_UPDATE_MAIN_BORROWER_QUEUE, mainBorrowerRequest);
 
-        Thread.sleep(5000);
-
-        assertEquals(contractorRepository.findById(mainBorrowerRequest.contractorId()).get().isActiveMainBorrower(), mainBorrowerRequest.main());
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            assertEquals(contractorRepository.findById(mainBorrowerRequest.contractorId()).get().isActiveMainBorrower(), mainBorrowerRequest.main());
+        });
     }
 
     @Test
     @Sql("/sql/contractors.sql")
-    void testMainBorrowerConsume_withPausedListener_changesMainBorrowerAfterPause() throws InterruptedException {
+    void testMainBorrowerConsume_withPausedListener_changesMainBorrowerAfterPause() {
         registry.stop();
         MainBorrowerRequest mainBorrowerRequest = new MainBorrowerRequest("1", true);
         rabbitTemplate.convertAndSend(MQConfiguration.CONTRACTOR_UPDATE_MAIN_BORROWER_QUEUE, mainBorrowerRequest);
 
         registry.getListenerContainer(MQConfiguration.CONTRACTOR_UPDATE_MAIN_BORROWER_QUEUE).start();
-        Thread.sleep(1000);
 
-        assertEquals(contractorRepository.findById(mainBorrowerRequest.contractorId()).get().isActiveMainBorrower(), mainBorrowerRequest.main());
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            assertEquals(contractorRepository.findById(mainBorrowerRequest.contractorId()).get().isActiveMainBorrower(), mainBorrowerRequest.main());
+        });
     }
 
 }
