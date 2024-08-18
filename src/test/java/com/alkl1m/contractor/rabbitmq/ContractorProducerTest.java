@@ -54,8 +54,8 @@ class ContractorProducerTest {
     ContractorProducer contractorProducer;
 
     @Test
-    void testSendUpdateMessage_withValidData_savesMessageToQueue() throws InterruptedException {
-        UpdateContractorMessage updateContractorMessage = new UpdateContractorMessage("1", "newName", "101010101", ZonedDateTime.now().toString(), "1");
+    void testSendCreateMessage_withValidData_savesMessageToQueue() throws InterruptedException {
+        UpdateContractorMessage updateContractorMessage = new UpdateContractorMessage("100", "newName", "101010101", ZonedDateTime.now().toString(), "1");
         contractorProducer.sendCreateMessage(updateContractorMessage);
 
         Thread.sleep(5000);
@@ -66,7 +66,7 @@ class ContractorProducerTest {
     }
 
     @Test
-    void testSendUpdateMessage_withValidData_savesMessageToQueue2() throws InterruptedException {
+    void testSendUpdateMessage_withValidData_savesMessageToQueue() throws InterruptedException {
         UpdateContractorMessage updateContractorMessage = new UpdateContractorMessage("1", "newName", "101010101", ZonedDateTime.now().toString(), "1");
         contractorProducer.sendUpdateMessage(updateContractorMessage);
 
