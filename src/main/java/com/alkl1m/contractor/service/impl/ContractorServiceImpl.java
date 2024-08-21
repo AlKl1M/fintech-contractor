@@ -10,6 +10,7 @@ import com.alkl1m.contractor.domain.exception.ContractorNotFoundException;
 import com.alkl1m.contractor.domain.exception.CountryNotFoundException;
 import com.alkl1m.contractor.domain.exception.IndustryNotFoundException;
 import com.alkl1m.contractor.domain.exception.OrgFormNotFoundException;
+import com.alkl1m.contractor.rabbitmq.ContractorProducer;
 import com.alkl1m.contractor.repository.jdbc.ContractorJdbcRepository;
 import com.alkl1m.contractor.repository.ContractorRepository;
 import com.alkl1m.contractor.repository.CountryRepository;
@@ -21,6 +22,7 @@ import com.alkl1m.contractor.web.payload.ContractorDto;
 import com.alkl1m.contractor.web.payload.ContractorFiltersPayload;
 import com.alkl1m.contractor.web.payload.ContractorsDto;
 import com.alkl1m.contractor.web.payload.NewContractorPayload;
+import com.alkl1m.contractor.web.payload.UpdateContractorMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +34,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -53,6 +59,7 @@ public class ContractorServiceImpl implements ContractorService {
     private final CountryRepository countryRepository;
     private final IndustryRepository industryRepository;
     private final OrgFormRepository orgFormRepository;
+    private final ContractorProducer contractorProducer;
 
     /**
      * Поиск контрагента по заданным параметрам.
@@ -177,9 +184,15 @@ public class ContractorServiceImpl implements ContractorService {
         Industry industry = industryRepository.findById(payload.industry_id()).orElseThrow(() -> new IndustryNotFoundException("Industry not found"));
         OrgForm orgForm = orgFormRepository.findById(payload.orgForm_id()).orElseThrow(() -> new OrgFormNotFoundException("OrgForm not found"));
 
-        return contractorRepository.save(
+        Contractor save = contractorRepository.save(
                 NewContractorPayload.toContractor(payload, country, industry, orgForm, userId)
         );
+
+        UpdateContractorMessage message = new UpdateContractorMessage(save.getId(), save.getName(), save.getInn(), LocalDate.now().toString(), userId);
+
+        contractorProducer.sendCreateMessage(message);
+
+        return save;
     }
 
     /**
@@ -203,7 +216,22 @@ public class ContractorServiceImpl implements ContractorService {
         existingContractor.setModifyDate(new Date());
         existingContractor.setModifyUserId(userId);
         existingContractor.setActive(true);
-        return contractorRepository.save(existingContractor);
+
+        Contractor save = contractorRepository.save(existingContractor);
+
+        ZonedDateTime nowInMoscowTimeZone = ZonedDateTime.now(ZoneId.of("Europe/Moscow"));
+
+        UpdateContractorMessage message = new UpdateContractorMessage(
+                save.getId(),
+                save.getName(),
+                save.getInn(),
+                nowInMoscowTimeZone.format(DateTimeFormatter.ISO_ZONED_DATE_TIME),
+                userId
+        );
+
+        contractorProducer.sendUpdateMessage(message);
+
+        return save;
     }
 
     private void validateUserRoles(ContractorFiltersPayload payload, Set<GrantedAuthority> userRoles) {

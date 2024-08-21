@@ -19,10 +19,10 @@ public final class JwtUtil {
         claims.put("roles", roles);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000L))
+                .claims(claims)
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 86400000L))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
