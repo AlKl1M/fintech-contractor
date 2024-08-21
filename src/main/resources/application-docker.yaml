@@ -1,0 +1,32 @@
+application-version: 0.0.1-SNAPSHOT
+application-description: Contractor rest api
+
+server:
+  port: 8081
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://172.17.0.1:5432/contractor
+    username: contractor
+    password: contractor
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+      continue-on-error: false
+  liquibase:
+    change-log: classpath:liquibase/db.changelog.yaml
+    enabled: true
+  rabbitmq:
+    host: 172.17.0.1
+    virtual-host: vhost
+    password: 1234
+    username: rab
+    millisToResend: 300000
+application:
+  security:
+    jwt:
+      secret: YiJW5JhK3uv6q8InoJgQYP3hmOEP/79009Y/6/Xeamxq9DnYSVZzU1m5iFRCNWymmBAmLmYmY2C1KcSqX5aELlN7fkLdJtehwaSjWotfrESvUIap6VI9GyMglmeuBPTfFQMHJM7qhLwZQXHIrA3sRjvSrDHNTffuEHmKqtWuXgIX%
